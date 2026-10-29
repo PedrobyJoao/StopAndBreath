@@ -1,4 +1,4 @@
-# Project Context
+# Stop And Breath
 
 This Android app provides periodic mindful-breathing reminders.
 Every `n` minutes, it displays a full-screen overlay containing a mindful message.
