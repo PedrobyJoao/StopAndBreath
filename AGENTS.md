@@ -1,21 +1,26 @@
 # Stop And Breath
 
 This Android app provides periodic mindful-breathing reminders.
-Every `n` minutes, it displays a full-screen overlay containing a mindful message.
-The overlay cannot be dismissed through its own controls until `s` seconds have
+
+Every `n` minutes, it displays a full-screen popup window containing a mindful message.
+The window cannot be dismissed through its own controls until `s` seconds have
 elapsed and should remain visible over ordinary apps.
 
-## Requirements:
+## Docs
 
-- User can NOT dismiss the popup until timer have elapsed.
-- User can NOT see notifications (from notifications dropdown) until timer have elapsed.
-- The tool shall NOT use root access
+- Software requirements: `requirements.md`
+- Roadmap: `roadmap.md`
 
-## Technology
+## Main code files
 
-- Kotlin with native Android APIs.
-- Android Studio
-- A foreground service with an ongoing notification for background operation.
+Under `app/src/main/java/com/stopandbreathe/`:
+
+- `MainActivity.kt`: setup screen and Start/Stop controls.
+- `ReminderService.kt`: background service and popup handling.
+- `ReminderSession.kt`: reminder timing and dismissal rules.
+
+Android components and permissions are declared in
+`app/src/main/AndroidManifest.xml`.
 
 ## Development Guidelines
 
@@ -23,3 +28,4 @@ elapsed and should remain visible over ordinary apps.
 - Don't create unecessary tests that actually don't test anything new. Don't duplicate tests.
   I like simple and meaningful tests
 - Max 70 chars per line when writing (including spaces), also for docs
+- Security: respect user data privacy and be careful with unsafe code!
