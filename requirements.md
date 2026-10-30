@@ -11,15 +11,20 @@ locking its screen for `s` seconds.
 
 Functional:
 
+- App MUST starts automatically while phone is on
 - App MUST lock popup window until defined timer elapses
   - User MUST not be able to close the window
   - User MUST not be able to scroll through notifications
   - User MAY not be able to see notifications banner popups
 - App MUST have a close button that becomes clickable
   only after timer have elapsed
+- App MUST NOT preserve accumulated screen time counter
+  if the phone is turned off or the process killed
 
 Non-functional requirements:
 
+- App MUST pause countdown if screen turns off in the middle of the
+  reminder
 - App MUST keep track of screen time (non-idle) *1 for the interval
   between reminders
 - App MUST define defaults for `n` and `s`
@@ -29,5 +34,5 @@ Non-functional requirements:
 - App MUST not use root access
 - App MAY use accessibility service
 
-*1: Non-idle will be determined by screen being on. So the app doesn't have
-to try to detect user activity.
+*1: Non-idle will be determined by screen being on AND being unlocked.
+So the app doesn't have to try to detect user activity.
