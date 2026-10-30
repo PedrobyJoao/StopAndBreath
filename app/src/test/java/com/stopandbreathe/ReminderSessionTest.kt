@@ -4,91 +4,168 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class ReminderSessionTest {
-    private val session = ReminderSession(intervalMillis = 60_000, countdownMillis = 10_000)
+    private fun newSession() = ReminderSession(60_000, 10_000)
+    private val session = newSession()
 
-    @Test fun `start schedules first reminder without resetting on duplicate start`() {
-        session.start(1_000)
-        session.start(2_000)
-        assertEquals(61_000L, session.nextReminderAt)
-        assertFalse(session.isDue(60_999))
-        assertTrue(session.isDue(61_000))
+    private fun showReminder() {
+        session.update(0, active = true)
+        session.update(60_000, active = true)
+        session.show(60_000)
     }
 
-    @Test fun `countdown rounds up and cannot be bypassed`() {
-        session.start(0)
-        session.show(5_000)
-        assertEquals(10L, session.secondsRemaining(5_000))
-        assertEquals(10L, session.secondsRemaining(5_001))
-        assertEquals(1L, session.secondsRemaining(14_999))
-        assertFalse(session.dismiss(14_999))
-        assertFalse(session.stop())
-        assertTrue(session.running)
-        assertTrue(session.showing)
-        assertNull(session.nextReminderAt)
+    @Test fun `interval counts only active time across pauses`() {
+        session.update(0, active = false)
+        session.update(100_000, active = true)
+        assertEquals(60L, session.intervalSeconds)
+        session.update(120_000, active = false)
+        assertEquals(40L, session.intervalSeconds)
+        session.update(500_000, active = false)
+        session.update(600_000, active = true)
+        assertEquals(40L, session.intervalSeconds)
+        session.update(639_999, active = true)
+        assertFalse(session.isDue)
+        session.update(640_000, active = true)
+        assertTrue(session.isDue)
     }
 
-    @Test fun `dismiss schedules next interval from dismissal`() {
-        session.start(0)
-        session.show(5_000)
-        assertEquals(0L, session.secondsRemaining(15_000))
-        assertTrue(session.dismiss(15_000))
+    @Test fun `due reminder waits while inactive without catchup`() {
+        session.update(0, active = true)
+        session.update(60_000, active = false)
+        assertFalse(session.isDue)
+        session.update(600_000, active = true)
+        assertTrue(session.isDue)
         assertFalse(session.showing)
-        assertEquals(75_000L, session.nextReminderAt)
-        assertTrue(session.stop())
-        assertFalse(session.running)
-        assertNull(session.nextReminderAt)
+        session.show(600_000)
+        assertEquals(10L, session.countdownSeconds)
+        assertFalse(session.isDue)
     }
 
-    @Test fun `unlocked reminder still requires explicit dismissal`() {
-        session.start(0)
-        session.show(0)
-        assertEquals(0L, session.secondsRemaining(100_000))
-        assertFalse(session.isDue(100_000))
-        assertFalse(session.stop())
+    @Test fun `countdown pauses and resumes without resetting`() {
+        showReminder()
+        session.update(63_250, active = false)
+        assertEquals(6_750L, session.countdownRemainingMillis)
+        session.update(600_000, active = false)
+        assertEquals(7L, session.countdownSeconds)
+        session.update(700_000, active = true)
+        session.show(700_000)
+        session.update(706_749, active = true)
+        assertEquals(1L, session.countdownSeconds)
+        assertFalse(session.dismiss(706_749))
+        assertTrue(session.dismiss(706_750))
+    }
+
+    @Test fun `paused reminder recovers without unlock broadcast`() {
+        showReminder()
+        session.update(63_000, active = false)
+        assertNull(session.nextUpdateDelayMillis(screenOn = false))
+
+        // SCREEN_ON arrives while locked. USER_PRESENT never arrives.
+        session.update(100_000, active = false)
+        val delay = session.nextUpdateDelayMillis(screenOn = true)
+        assertEquals(ReminderConfig.INTERVAL_CHECK_MILLIS, delay)
+        session.update(100_000 + delay!!, active = false)
+        assertEquals(7L, session.countdownSeconds)
+
+        // The scheduled check detects unlock and resumes the session.
+        session.update(110_000, active = true)
+        assertTrue(session.active)
         assertTrue(session.showing)
+        assertEquals(7L, session.countdownSeconds)
+        assertEquals(
+            ReminderConfig.COUNTDOWN_CHECK_MILLIS,
+            session.nextUpdateDelayMillis(screenOn = true),
+        )
+        assertFalse(session.dismiss(116_999))
+        assertTrue(session.dismiss(117_000))
+    }
+
+    @Test fun `due interval checks keyguard without busy loop`() {
+        session.update(0, active = true)
+        session.update(60_000, active = false)
+        session.update(100_000, active = false)
+        assertEquals(0L, session.intervalRemainingMillis)
+        assertFalse(session.isDue)
+        assertEquals(
+            ReminderConfig.INTERVAL_CHECK_MILLIS,
+            session.nextUpdateDelayMillis(screenOn = true),
+        )
+        assertNull(session.nextUpdateDelayMillis(screenOn = false))
+        session.update(101_000, active = true)
+        assertTrue(session.isDue)
+        assertEquals(
+            1L, session.nextUpdateDelayMillis(screenOn = true),
+        )
+    }
+
+    @Test fun `dismiss checks time even between UI updates`() {
+        showReminder()
+        assertEquals(10L, session.countdownSeconds)
+        assertFalse(session.dismiss(69_999))
+        assertEquals(1L, session.countdownSeconds)
+        assertTrue(session.showing)
+        assertTrue(session.dismiss(70_000))
+        assertFalse(session.showing)
+    }
+
+    @Test fun `zero countdown waits for active explicit dismissal`() {
+        showReminder()
+        session.update(80_000, active = false)
+        assertEquals(0L, session.countdownSeconds)
+        assertTrue(session.showing)
+        assertFalse(session.dismiss(90_000))
+        session.update(100_000, active = true)
+        assertTrue(session.showing)
+        assertFalse(session.isDue)
         assertTrue(session.dismiss(100_000))
     }
 
-    @Test fun `repeated test does not reset countdown`() {
-        session.start(0)
-        session.show(1_000)
-        session.show(5_000)
-        assertEquals(11_000L, session.dismissAvailableAt)
-        assertEquals(6L, session.secondsRemaining(5_000))
-    }
-
-    @Test fun `overdue reminder can show once after sleep`() {
-        session.start(0)
-        assertTrue(session.isDue(600_000))
-        session.show(600_000)
-        assertFalse(session.isDue(600_000))
-        assertEquals(10L, session.secondsRemaining(600_000))
-    }
-
-    @Test fun `stopped session can restart`() {
-        session.start(0)
-        assertTrue(session.stop())
-        assertFalse(session.isDue(100_000))
-        session.start(100_000)
-        assertEquals(160_000L, session.nextReminderAt)
-    }
-
-    @Test fun `late dismissal does not schedule a burst of missed reminders`() {
-        session.start(0)
-        session.show(60_000)
+    @Test fun `dismiss starts a full interval without catchup`() {
+        showReminder()
         assertTrue(session.dismiss(600_000))
-        assertEquals(660_000L, session.nextReminderAt)
-        assertFalse(session.isDue(600_000))
+        assertEquals(60L, session.intervalSeconds)
         assertFalse(session.dismiss(600_001))
-        assertEquals(660_000L, session.nextReminderAt)
+        session.update(659_999, active = true)
+        assertFalse(session.isDue)
+        session.update(660_000, active = true)
+        assertTrue(session.isDue)
     }
 
-    @Test fun `inactive session has no pending reminder`() {
-        assertFalse(session.running)
+    @Test fun `countdown starts only when window is shown`() {
+        session.update(0, active = true)
+        session.update(60_000, active = true)
+        session.update(100_000, active = true)
+        assertTrue(session.isDue)
         assertFalse(session.showing)
-        assertFalse(session.isDue(600_000))
-        assertFalse(session.dismiss(600_000))
-        assertEquals(0L, session.secondsRemaining(600_000))
+        session.show(100_000)
+        session.update(100_001, active = true)
+        assertEquals(10L, session.countdownSeconds)
+        session.show(101_000)
+        assertEquals(9L, session.countdownSeconds)
+    }
+
+    @Test fun `new service session resets all progress`() {
+        session.update(0, active = true)
+        session.update(30_000, active = true)
+        val afterIntervalRestart = newSession()
+        afterIntervalRestart.update(40_000, active = true)
+        assertEquals(60L, afterIntervalRestart.intervalSeconds)
+
+        session.update(60_000, active = true)
+        session.show(60_000)
+        session.update(65_000, active = true)
+        val afterReminderRestart = newSession()
+        afterReminderRestart.update(70_000, active = true)
+        assertFalse(afterReminderRestart.showing)
+        assertEquals(60L, afterReminderRestart.intervalSeconds)
+    }
+
+    @Test fun `fresh session cannot dismiss or become due`() {
+        assertFalse(session.active)
+        assertFalse(session.isDue)
+        assertFalse(session.showing)
+        assertFalse(session.dismiss(100_000))
+        assertEquals(60L, session.intervalSeconds)
+        assertEquals(0L, session.countdownSeconds)
     }
 
     @Test(expected = IllegalArgumentException::class)

@@ -15,9 +15,10 @@ elapsed and should remain visible over ordinary apps.
 
 Under `app/src/main/java/com/stopandbreathe/`:
 
-- `MainActivity.kt`: setup screen and Start/Stop controls.
-- `ReminderService.kt`: background service and popup handling.
+- `MainActivity.kt`: accessibility setup and reminder status.
+- `ReminderService.kt`: automatic accessibility service and overlays.
 - `ReminderSession.kt`: reminder timing and dismissal rules.
+- `ReminderConfig.kt`: all editable reminder defaults and messages.
 
 Android components and permissions are declared in
 `app/src/main/AndroidManifest.xml`.

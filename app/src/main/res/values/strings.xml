@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Stop&amp;Breathe</string>
-    <string name="breathing_message">Breathing in, I\'m mindful.\nBreathing out, I\'m alive.</string>
+    <string name="accessibility_description">
+        Displays full-screen mindful-breathing reminders and blocks
+        ordinary touches until the countdown finishes. Reminders start
+        automatically, including after reboot. Timers pause while the
+        screen is off or locked. Does not read screen content or
+        collect personal data. System controls may still be available.
+    </string>
 </resources>
