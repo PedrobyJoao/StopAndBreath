@@ -29,7 +29,7 @@ data class ReminderStatus(
     val connected: Boolean = false,
     val active: Boolean = false,
     val showing: Boolean = false,
-    val intervalSeconds: Long = 0,
+    val remainingSeconds: Long = 0,
     val countdownSeconds: Long = 0,
     val error: String? = null,
 )
@@ -137,7 +137,11 @@ class ReminderService : AccessibilityService() {
             } catch (_: RuntimeException) {
                 removeOverlay()
                 // A failed window must not consume the countdown.
-                session.update(SystemClock.elapsedRealtime(), false)
+                // Display failure is not time away from the phone.
+                session.update(
+                    SystemClock.elapsedRealtime(), active,
+                    countdownPaused = true,
+                )
                 error = "Could not display the breathing reminder. " +
                     "Check accessibility access in Settings."
                 delay = ReminderConfig.OVERLAY_RETRY_MILLIS
@@ -281,7 +285,7 @@ class ReminderService : AccessibilityService() {
             connected = connected,
             active = session.active,
             showing = session.showing,
-            intervalSeconds = session.intervalSeconds,
+            remainingSeconds = session.remainingSeconds,
             countdownSeconds = session.countdownSeconds,
             error = error,
         )

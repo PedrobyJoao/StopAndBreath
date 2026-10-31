@@ -34,5 +34,25 @@ Non-functional requirements:
 - App MUST not use root access
 - App MAY use accessibility service
 
-*1: Non-idle will be determined by screen being on AND being unlocked.
-So the app doesn't have to try to detect user activity.
+*1: Non-idle means the screen is on AND unlocked.
+Idle means the screen is off OR locked.
+The app does not attempt to detect actual user activity.
+
+During each uninterrupted idle period, accumulated screen time MUST
+decrease proportionally to the idle duration and configured interval:
+
+```text
+accumulatedAfter =
+    accumulatedBefore × max(0, 1 − idleDuration / n)
+```
+
+Here, accumulatedBefore is the value at the start of that idle period.
+idleDuration and n MUST use the same time unit.
+An idle period of n minutes or longer MUST clear accumulated time.
+Shorter idle periods MUST clear the corresponding fraction.
+Recovery MUST NOT depend on how often the app checks the timer.
+
+Recovery applies only to the interval between reminders, including
+a due reminder that has not yet been displayed.
+An already displayed reminder MUST retain its paused countdown.
+Display failures MUST NOT be treated as phone idle time.

@@ -169,7 +169,7 @@ class MainActivity : Activity() {
             !state.active ->
                 "Paused — waiting for the screen to be on " +
                     "and unlocked."
-            else -> "Next reminder in ${state.intervalSeconds}s " +
+            else -> "Next reminder in ${state.remainingSeconds}s " +
                 "of screen-on, unlocked time."
         }
     }
