@@ -32,3 +32,8 @@ Android components and permissions are declared in
 - Security: the system must be secure. Don't write unsafe code. Be
   careful with user data and user's machine.
 - Max 70 chars per line when writing (including spaces), also for docs
+- When you finish your code edition, unless it's a trivial change,
+  spawn two agents to review your code and tests (if added). If they
+  find problems, discuss between you three, arrive at a conclusion,
+  and fix the problem if there was really one. Then repeat the process
+  spawning two new agents (not using the previous ones), and so on.
