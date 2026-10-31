@@ -8,8 +8,8 @@ elapsed and should remain visible over ordinary apps.
 
 ## Docs
 
-- Software requirements: `requirements.md`
-- Roadmap: `roadmap.md`
+- Software requirements: `docs/requirements.md`
+- Roadmap: `docs/roadmap.md`
 
 ## Main code files
 
