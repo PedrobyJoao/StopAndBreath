@@ -1,0 +1,124 @@
+# PRs to main: run unit tests and build a debug APK on updates.
+# Require "Tests and debug APK" in GitHub rules to block merging.
+#
+# Releases: after merging, push vX.Y.Z matching app versionName
+# in app/build.gradle.kts.
+#
+# Tags must reference a commit on main; tests/build must pass
+# before publishing its APK to GitHub Releases.
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Tests and debug APK
+    runs-on: ubuntu-24.04
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      # actions/checkout v6.0.2
+      - uses: "actions/checkout@\
+          de0fac2e4500dabe0009e67214ff5f5447ce83dd"
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Record built commit and validate release tags
+        id: commit
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          [[ "$REF_TYPE" == tag ]] || exit 0
+          version=$(sed -n 's/^ *versionName = "\(.*\)"$/\1/p' \
+            app/build.gradle.kts)
+          number='(0|[1-9][0-9]*)'
+          pattern="^v${number}[.]${number}[.]${number}$"
+          [[ "$TAG" =~ $pattern && "${TAG#v}" == "$version" ]] || {
+            echo '::error::Expected vX.Y.Z matching app versionName'
+            exit 1
+          }
+          git merge-base --is-ancestor HEAD origin/main || {
+            echo '::error::Release commit must be merged into main'
+            exit 1
+          }
+      # actions/setup-java v5.2.0
+      - uses: "actions/setup-java@\
+          be666c2fcd27ec809703dec50e508c2fdc7f6654"
+        with:
+          distribution: temurin
+          java-version: '17'
+      # gradle/actions/setup-gradle v5.0.2
+      - uses: "gradle/actions/setup-gradle@\
+          0723195856401067f7a2779048b490ace7a47d7c"
+        with:
+          cache-disabled: true
+      - name: Install Android SDK packages
+        run: >-
+          sdkmanager "platforms;android-36" "build-tools;36.0.0"
+      - name: Run unit tests and build APK
+        run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
+      # actions/upload-artifact v6.0.0
+      - uses: "actions/upload-artifact@\
+          b7c566a772e6b6bfb58ed0dc250532a479d7789f"
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+  release:
+    name: GitHub Release
+    needs: build
+    if: >-
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - name: Download this run's APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: >-
+          gh run download "$RUN_ID" --name debug-apk
+          --dir release-apk
+      - name: Publish the existing tag's debug APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BUILD_SHA: ${{ needs.build.outputs.sha }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          api="repos/$GH_REPO"
+          actual=$(gh api "$api/commits/refs/tags/$TAG" --jq .sha)
+          [[ "$actual" == "$BUILD_SHA" ]] || {
+            echo '::error::Tag no longer matches the built commit'
+            exit 1
+          }
+          apk="stop-and-breathe-$TAG-debug.apk"
+          test -s release-apk/app-debug.apk
+          mv release-apk/app-debug.apk "$apk"
+          notes='Debug signed; not production signed or Play Store.'
+          notes+=$'\nNew debug keys may require uninstall/reinstall.'
+          notes+=$'\nBuilt commit: '"$BUILD_SHA"
+          gh release create "$TAG" \
+            "$apk#Debug APK (not production signed)" \
+            --verify-tag --title "$TAG" --notes "$notes"
