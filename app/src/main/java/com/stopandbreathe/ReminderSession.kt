@@ -14,8 +14,9 @@ class ReminderSession(
     private var idleSince: Long? = null
     private var idleAccumulatedMillis = 0L
     private var countdownPaused = false
+    private var screenOn = true
 
-    var active = false
+    var active = false // True when the screen is on AND unlocked.
         private set
     var intervalRemainingMillis = intervalMillis
         private set
@@ -23,6 +24,8 @@ class ReminderSession(
         private set
 
     val showing: Boolean get() = countdownRemainingMillis != null
+    
+    // isDue: ready to show: active, interval elapsed, no current reminder.
     val isDue: Boolean
         get() = active && !showing && intervalRemainingMillis == 0L
     val remainingSeconds: Long
@@ -35,21 +38,22 @@ class ReminderSession(
         now: Long,
         active: Boolean,
         countdownPaused: Boolean = false,
+        screenOn: Boolean = true,
     ) {
         val elapsed = updatedAt?.let { now - it } ?: 0L
         require(elapsed >= 0)
-        if (this.active) {
-            val remaining = countdownRemainingMillis
-            if (remaining != null) {
-                if (!this.countdownPaused) {
-                    countdownRemainingMillis =
-                        (remaining - elapsed).coerceAtLeast(0)
-                }
-            } else {
-                intervalRemainingMillis = (intervalRemainingMillis -
-                    elapsed).coerceAtLeast(0)
+        val remaining = countdownRemainingMillis
+        if (remaining != null) {
+            if ((this.active || !this.screenOn) &&
+                !this.countdownPaused
+            ) {
+                countdownRemainingMillis =
+                    (remaining - elapsed).coerceAtLeast(0)
             }
-        } else if (!showing) {
+        } else if (this.active) {
+            intervalRemainingMillis = (intervalRemainingMillis -
+                elapsed).coerceAtLeast(0)
+        } else {
             idleSince?.let { start ->
                 val idleMillis = now - start
                 // Use the original snapshot, not each polled value.
@@ -73,18 +77,19 @@ class ReminderSession(
         updatedAt = now
         this.active = active
         this.countdownPaused = countdownPaused
+        this.screenOn = screenOn
     }
 
     /** Call only after the window has been added successfully. */
     fun show(now: Long) {
-        update(now, active)
+        update(now, active, screenOn = screenOn)
         if (showing) return
         check(isDue)
         countdownRemainingMillis = countdownMillis
     }
 
     fun dismiss(now: Long): Boolean {
-        update(now, active)
+        update(now, active, screenOn = screenOn)
         if (!active || countdownRemainingMillis != 0L) return false
         countdownRemainingMillis = null
         intervalRemainingMillis = intervalMillis

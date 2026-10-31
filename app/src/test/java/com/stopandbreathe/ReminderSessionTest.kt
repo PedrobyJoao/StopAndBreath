@@ -87,8 +87,8 @@ class ReminderSessionTest {
 
     @Test fun `due but unshown reminder also receives recovery`() {
         session.update(0, active = true)
-        // The interval ends as the user goes idle, before show().
-        session.update(60_000, active = false)
+        // The interval ends as the screen turns off, before show().
+        session.update(60_000, active = false, screenOn = false)
         assertFalse(session.isDue)
         // 30s idle clears half of the 60s used: 30s remain.
         session.update(90_000, active = true)
@@ -115,12 +115,13 @@ class ReminderSessionTest {
         assertEquals(6_000L, session.countdownRemainingMillis)
     }
 
-    @Test fun `countdown pauses and resumes without resetting`() {
+    @Test fun `lit lock screen pauses countdown without resetting`() {
         showReminder()
-        session.update(63_250, active = false)
+        session.update(63_250, active = false, screenOn = true)
         assertEquals(6_750L, session.countdownRemainingMillis)
-        // 6.75s remains unchanged during idle, displayed as 7s.
-        session.update(600_000, active = false)
+
+        // A lit lock screen preserves the remaining 6.75s.
+        session.update(600_000, active = false, screenOn = true)
         assertEquals(7L, session.countdownSeconds)
         session.update(700_000, active = true)
         session.show(700_000)
@@ -128,6 +129,44 @@ class ReminderSessionTest {
         assertEquals(1L, session.countdownSeconds)
         assertFalse(session.dismiss(706_749))
         assertTrue(session.dismiss(706_750))
+    }
+
+    @Test fun `screen off counts down but lit lock screen pauses`() {
+        showReminder()
+        session.update(63_000, active = false, screenOn = false)
+        assertEquals(7_000L, session.countdownRemainingMillis)
+        assertNull(session.nextUpdateDelayMillis(screenOn = false))
+
+        // 3s off consumes 3s; waking to the lock screen pauses it.
+        session.update(66_000, active = false, screenOn = true)
+        assertEquals(4_000L, session.countdownRemainingMillis)
+        // 34s on the lit lock screen consumes nothing.
+        session.update(100_000, active = false, screenOn = false)
+        assertEquals(4_000L, session.countdownRemainingMillis)
+        // Another 2s off counts before the user returns unlocked.
+        session.update(102_000, active = true)
+        assertEquals(2_000L, session.countdownRemainingMillis)
+        session.update(103_000, active = true)
+        assertEquals(1_000L, session.countdownRemainingMillis)
+    }
+
+    @Test fun `countdown finished while off still needs dismissal`() {
+        showReminder()
+        session.update(63_000, active = false, screenOn = false)
+        assertNull(session.nextUpdateDelayMillis(screenOn = false))
+
+        // No updates while off; waking accounts for all elapsed time.
+        session.update(100_000, active = false, screenOn = true)
+        assertEquals(0L, session.countdownRemainingMillis)
+        assertTrue(session.showing)
+        assertFalse(session.dismiss(100_000))
+
+        // Unlock enables dismissal, not an automatic new interval.
+        session.update(110_000, active = true)
+        assertTrue(session.showing)
+        assertFalse(session.isDue)
+        assertTrue(session.dismiss(110_000))
+        assertEquals(60_000L, session.intervalRemainingMillis)
     }
 
     @Test fun `paused reminder schedules checks with screen on`() {

@@ -23,8 +23,11 @@ Functional:
 
 Non-functional requirements:
 
-- App MUST pause countdown if screen turns off in the middle of the
-  reminder
+- App MUST continue an already displayed reminder's countdown while
+  the screen is off, without waking the phone or scheduling checks
+- App MUST pause countdown while the screen is on but locked
+- App MUST require explicit dismissal after unlock, even if countdown
+  finished while the screen was off
 - App MUST keep track of screen time (non-idle) *1 for the interval
   between reminders
 - App MUST define defaults for `n` and `s`
@@ -54,5 +57,5 @@ Recovery MUST NOT depend on how often the app checks the timer.
 
 Recovery applies only to the interval between reminders, including
 a due reminder that has not yet been displayed.
-An already displayed reminder MUST retain its paused countdown.
+Idle recovery MUST NOT reset the countdown of a displayed reminder.
 Display failures MUST NOT be treated as phone idle time.

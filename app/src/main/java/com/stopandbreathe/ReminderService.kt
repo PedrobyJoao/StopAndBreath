@@ -108,18 +108,19 @@ class ReminderService : AccessibilityService() {
         !getSystemService(KeyguardManager::class.java)
             .isKeyguardLocked
 
-    private fun isAvailable(): Boolean = isScreenOn() && isUnlocked()
-
     private fun updateReminder(screenOn: Boolean = isScreenOn()) {
         handler.removeCallbacks(update)
         if (!connected) return
         val active = screenOn && isUnlocked()
-        session.update(SystemClock.elapsedRealtime(), active)
+        session.update(
+            SystemClock.elapsedRealtime(), active,
+            screenOn = screenOn,
+        )
         var delay = session.nextUpdateDelayMillis(screenOn)
 
         if (!active) {
             // Never cover the keyguard or keep the screen awake.
-            // The session and its chosen message survive this pause.
+            // Keep the reminder and message while hiding the window.
             removeOverlay()
         } else {
             try {
@@ -204,8 +205,11 @@ class ReminderService : AccessibilityService() {
             setOnClickListener {
                 // Recheck the real screen state and monotonic timer;
                 // disabled styling alone is not the dismissal guard.
+                val screenOn = isScreenOn()
                 session.update(
-                    SystemClock.elapsedRealtime(), isAvailable(),
+                    SystemClock.elapsedRealtime(),
+                    active = screenOn && isUnlocked(),
+                    screenOn = screenOn,
                 )
                 if (session.dismiss(SystemClock.elapsedRealtime())) {
                     removeOverlay()
