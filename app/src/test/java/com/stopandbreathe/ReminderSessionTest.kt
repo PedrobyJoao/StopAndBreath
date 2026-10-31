@@ -156,14 +156,17 @@ class ReminderSessionTest {
     }
 
     @Test fun `countdown finished while off still needs dismissal`() {
+        // No updates while off; waking accounts for all elapsed time.
         showReminder()
         session.update(63_000, OFF)
         assertNull(session.nextUpdateDelayMillis())
 
-        // No updates while off; waking accounts for all elapsed time.
+        // after 100 seconds, the reminder is still there,
+        // ready to be closed
         session.update(100_000, ON_AND_LOCKED)
         assertEquals(0L, session.countdownRemainingMillis)
         assertTrue(session.showing)
+        // Dismiss can NOT be done while LOCKED
         assertFalse(session.dismiss(100_000))
 
         // Unlock enables dismissal, not an automatic new interval.

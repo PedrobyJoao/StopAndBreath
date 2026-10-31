@@ -102,7 +102,12 @@ class ReminderSession(
         return true
     }
 
-    /** A lit lock screen must keep checking for a missed unlock. */
+    /** 
+      It returns how many milliseconds the service should wait before
+      checking the session again.
+
+      A lit lock screen must keep checking for a missed unlock. 
+    */
     fun nextUpdateDelayMillis(): Long? = when (screenState) {
         ScreenState.OFF -> null
         ScreenState.ON_AND_LOCKED -> ReminderConfig.INTERVAL_CHECK_MILLIS
