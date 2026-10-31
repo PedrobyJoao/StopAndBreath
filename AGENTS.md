@@ -25,8 +25,10 @@ Android components and permissions are declared in
 
 ## Development Guidelines
 
-- Keep implementation simple and avoid unnecessary dependencies.
-- Don't create unecessary tests that actually don't test anything new. Don't duplicate tests.
-  I like simple and meaningful tests
+- Aim for simplicity, both code and architecture wise. If the requirements
+  can be fulfilled in an efficient way with a simple solution, prefer it
+  rather than making it more complex
+- Only useful tests: don't add duplicated and not meaningful tests.
+- Security: the system must be secure. Don't write unsafe code. Be
+  careful with user data and user's machine.
 - Max 70 chars per line when writing (including spaces), also for docs
-- Security: respect user data privacy and be careful with unsafe code!
