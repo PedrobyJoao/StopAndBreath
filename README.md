@@ -32,3 +32,7 @@ Breathing out, I take care of my mind and body
 ```
 
 ## How it works
+
+## License
+
+Licensed under the [MIT License](LICENSE).
