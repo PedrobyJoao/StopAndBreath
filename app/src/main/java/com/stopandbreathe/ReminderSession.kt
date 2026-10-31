@@ -1,5 +1,11 @@
 package com.stopandbreathe
 
+enum class ScreenState {
+    OFF,
+    ON_AND_LOCKED, // Screen On and phone Locked
+    ON_AND_UNLOCKED, // Screen On and phone Unlocked
+}
+
 /** In-memory timing; callers supply monotonic milliseconds. */
 class ReminderSession(
     private val intervalMillis: Long,
@@ -14,9 +20,8 @@ class ReminderSession(
     private var idleSince: Long? = null
     private var idleAccumulatedMillis = 0L
     private var countdownPaused = false
-    private var screenOn = true
 
-    var active = false // True when the screen is on AND unlocked.
+    var screenState = ScreenState.ON_AND_LOCKED
         private set
     var intervalRemainingMillis = intervalMillis
         private set
@@ -25,9 +30,10 @@ class ReminderSession(
 
     val showing: Boolean get() = countdownRemainingMillis != null
     
-    // isDue: ready to show: active, interval elapsed, no current reminder.
+    // Ready to show: unlocked, interval elapsed, no current reminder.
     val isDue: Boolean
-        get() = active && !showing && intervalRemainingMillis == 0L
+        get() = screenState == ScreenState.ON_AND_UNLOCKED &&
+            !showing && intervalRemainingMillis == 0L
     val remainingSeconds: Long
         get() = seconds(intervalRemainingMillis)
     val countdownSeconds: Long
@@ -36,21 +42,20 @@ class ReminderSession(
     /** Account for the old state before a screen transition. */
     fun update(
         now: Long,
-        active: Boolean,
+        screenState: ScreenState,
         countdownPaused: Boolean = false,
-        screenOn: Boolean = true,
     ) {
         val elapsed = updatedAt?.let { now - it } ?: 0L
         require(elapsed >= 0)
         val remaining = countdownRemainingMillis
         if (remaining != null) {
-            if ((this.active || !this.screenOn) &&
+            if (this.screenState != ScreenState.ON_AND_LOCKED &&
                 !this.countdownPaused
             ) {
                 countdownRemainingMillis =
                     (remaining - elapsed).coerceAtLeast(0)
             }
-        } else if (this.active) {
+        } else if (this.screenState == ScreenState.ON_AND_UNLOCKED) {
             intervalRemainingMillis = (intervalRemainingMillis -
                 elapsed).coerceAtLeast(0)
         } else {
@@ -67,7 +72,7 @@ class ReminderSession(
                     idleAccumulatedMillis + recovered
             }
         }
-        if (active || showing) {
+        if (screenState == ScreenState.ON_AND_UNLOCKED || showing) {
             idleSince = null
         } else if (idleSince == null) {
             idleSince = now
@@ -75,36 +80,40 @@ class ReminderSession(
                 intervalMillis - intervalRemainingMillis
         }
         updatedAt = now
-        this.active = active
+        this.screenState = screenState
         this.countdownPaused = countdownPaused
-        this.screenOn = screenOn
     }
 
     /** Call only after the window has been added successfully. */
     fun show(now: Long) {
-        update(now, active, screenOn = screenOn)
+        update(now, screenState)
         if (showing) return
         check(isDue)
         countdownRemainingMillis = countdownMillis
     }
 
     fun dismiss(now: Long): Boolean {
-        update(now, active, screenOn = screenOn)
-        if (!active || countdownRemainingMillis != 0L) return false
+        update(now, screenState)
+        if (screenState != ScreenState.ON_AND_UNLOCKED ||
+            countdownRemainingMillis != 0L
+        ) return false
         countdownRemainingMillis = null
         intervalRemainingMillis = intervalMillis
         return true
     }
 
     /** A lit lock screen must keep checking for a missed unlock. */
-    fun nextUpdateDelayMillis(screenOn: Boolean): Long? = when {
-        !screenOn -> null
-        !active -> ReminderConfig.INTERVAL_CHECK_MILLIS
-        showing -> ReminderConfig.COUNTDOWN_CHECK_MILLIS
-        else -> minOf(
-            ReminderConfig.INTERVAL_CHECK_MILLIS,
-            intervalRemainingMillis.coerceAtLeast(1),
-        )
+    fun nextUpdateDelayMillis(): Long? = when (screenState) {
+        ScreenState.OFF -> null
+        ScreenState.ON_AND_LOCKED -> ReminderConfig.INTERVAL_CHECK_MILLIS
+        ScreenState.ON_AND_UNLOCKED -> if (showing) {
+            ReminderConfig.COUNTDOWN_CHECK_MILLIS
+        } else {
+            minOf(
+                ReminderConfig.INTERVAL_CHECK_MILLIS,
+                intervalRemainingMillis.coerceAtLeast(1),
+            )
+        }
     }
 
     private fun seconds(millis: Long): Long =

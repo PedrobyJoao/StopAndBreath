@@ -161,12 +161,13 @@ class MainActivity : Activity() {
             state.error != null -> state.error
             state.showing -> {
                 val timer = "${state.countdownSeconds}s remaining."
-                if (!state.active) "Reminder paused — $timer"
-                else if (state.countdownSeconds > 0) {
+                if (state.screenState != ScreenState.ON_AND_UNLOCKED) {
+                    "Reminder paused — $timer"
+                } else if (state.countdownSeconds > 0) {
                     "Breathing reminder active — $timer"
                 } else "Breathing reminder ready to dismiss."
             }
-            !state.active ->
+            state.screenState != ScreenState.ON_AND_UNLOCKED ->
                 "Paused — waiting for the screen to be on " +
                     "and unlocked."
             else -> "Next reminder in ${state.remainingSeconds}s " +

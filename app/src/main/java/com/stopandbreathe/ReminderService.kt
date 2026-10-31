@@ -27,7 +27,7 @@ import android.widget.TextView
 
 data class ReminderStatus(
     val connected: Boolean = false,
-    val active: Boolean = false,
+    val screenState: ScreenState = ScreenState.ON_AND_LOCKED,
     val showing: Boolean = false,
     val remainingSeconds: Long = 0,
     val countdownSeconds: Long = 0,
@@ -58,8 +58,11 @@ class ReminderService : AccessibilityService() {
             // Trust screen transitions even if the power manager has
             // not exposed the new state yet.
             when (intent?.action) {
-                Intent.ACTION_SCREEN_OFF -> updateReminder(false)
-                Intent.ACTION_SCREEN_ON -> updateReminder(true)
+                Intent.ACTION_SCREEN_OFF ->
+                    updateReminder(ScreenState.OFF)
+                Intent.ACTION_SCREEN_ON -> updateReminder(
+                    currentScreenState(screenOn = true),
+                )
                 Intent.ACTION_USER_PRESENT -> updateReminder()
             }
         }
@@ -108,17 +111,23 @@ class ReminderService : AccessibilityService() {
         !getSystemService(KeyguardManager::class.java)
             .isKeyguardLocked
 
-    private fun updateReminder(screenOn: Boolean = isScreenOn()) {
+    private fun currentScreenState(
+        screenOn: Boolean = isScreenOn(),
+    ): ScreenState = when {
+        !screenOn -> ScreenState.OFF
+        !isUnlocked() -> ScreenState.ON_AND_LOCKED
+        else -> ScreenState.ON_AND_UNLOCKED
+    }
+
+    private fun updateReminder(
+        screenState: ScreenState = currentScreenState(),
+    ) {
         handler.removeCallbacks(update)
         if (!connected) return
-        val active = screenOn && isUnlocked()
-        session.update(
-            SystemClock.elapsedRealtime(), active,
-            screenOn = screenOn,
-        )
-        var delay = session.nextUpdateDelayMillis(screenOn)
+        session.update(SystemClock.elapsedRealtime(), screenState)
+        var delay = session.nextUpdateDelayMillis()
 
-        if (!active) {
+        if (session.screenState != ScreenState.ON_AND_UNLOCKED) {
             // Never cover the keyguard or keep the screen awake.
             // Keep the reminder and message while hiding the window.
             removeOverlay()
@@ -140,7 +149,7 @@ class ReminderService : AccessibilityService() {
                 // A failed window must not consume the countdown.
                 // Display failure is not time away from the phone.
                 session.update(
-                    SystemClock.elapsedRealtime(), active,
+                    SystemClock.elapsedRealtime(), screenState,
                     countdownPaused = true,
                 )
                 error = "Could not display the breathing reminder. " +
@@ -163,7 +172,9 @@ class ReminderService : AccessibilityService() {
         } else {
             "0s — continue when you're ready."
         }
-        dismissButton?.isEnabled = session.active && remaining == 0L
+        dismissButton?.isEnabled =
+            session.screenState == ScreenState.ON_AND_UNLOCKED &&
+                remaining == 0L
     }
 
     private fun addOverlay(text: String) {
@@ -205,11 +216,9 @@ class ReminderService : AccessibilityService() {
             setOnClickListener {
                 // Recheck the real screen state and monotonic timer;
                 // disabled styling alone is not the dismissal guard.
-                val screenOn = isScreenOn()
                 session.update(
                     SystemClock.elapsedRealtime(),
-                    active = screenOn && isUnlocked(),
-                    screenOn = screenOn,
+                    currentScreenState(),
                 )
                 if (session.dismiss(SystemClock.elapsedRealtime())) {
                     removeOverlay()
@@ -287,7 +296,7 @@ class ReminderService : AccessibilityService() {
     private fun publishStatus() {
         status = ReminderStatus(
             connected = connected,
-            active = session.active,
+            screenState = session.screenState,
             showing = session.showing,
             remainingSeconds = session.remainingSeconds,
             countdownSeconds = session.countdownSeconds,
