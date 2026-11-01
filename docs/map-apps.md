@@ -29,11 +29,11 @@ package/class metadata, not screen text, routes or location. No new
 permissions are added, and no app history is saved or transmitted.
 
 `MapAppTracker` keeps metadata filtering outside reminder timing.
-Only its last-known `UNKNOWN`, `MAP` or `OTHER` classification
-is cached in process memory. Service cleanup and reconnection reset
+Only its last-known map-active boolean is cached in process memory.
+Service cleanup and reconnection reset
 the reminder session, but retain that estimate while the process
-survives. Process termination clears it. Unknown follows normal
-startup scheduling; it does not suppress reminders indefinitely.
+survives. Process termination clears it. A fresh process defaults to
+false and follows normal startup scheduling.
 
 This cache avoids discarding an observation on reconnect.
 

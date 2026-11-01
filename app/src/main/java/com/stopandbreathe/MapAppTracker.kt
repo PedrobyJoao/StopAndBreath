@@ -1,18 +1,13 @@
 package com.stopandbreathe
 
-/** Last-known app classification, not authoritative window focus. */
+/** Last-known map estimate, not authoritative window focus. */
 internal class MapAppTracker(
     private val mapPackages: Set<String>,
     private val ownActivityClass: String,
 ) {
-    enum class Classification { UNKNOWN, MAP, OTHER }
-
-    var classification = Classification.UNKNOWN
+    // Default to normal startup scheduling, not a map exemption.
+    var mapAppActive = false
         private set
-
-    // Unknown keeps normal startup scheduling, not an exemption.
-    val mapAppActive: Boolean
-        get() = classification == Classification.MAP
 
     /** Use metadata only; retain no event history. */
     fun onWindowChanged(
@@ -30,11 +25,7 @@ internal class MapAppTracker(
         // Preserve map idle time while typing. This package-level
         // heuristic also ignores keyboard settings activities.
         if (isKeyboardPackage) return false
-        classification = if (app in mapPackages) {
-            Classification.MAP
-        } else {
-            Classification.OTHER
-        }
+        mapAppActive = app in mapPackages
         return true
     }
 }

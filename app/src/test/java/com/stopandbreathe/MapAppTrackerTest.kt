@@ -1,8 +1,5 @@
 package com.stopandbreathe
 
-import com.stopandbreathe.MapAppTracker.Classification.MAP
-import com.stopandbreathe.MapAppTracker.Classification.OTHER
-import com.stopandbreathe.MapAppTracker.Classification.UNKNOWN
 import com.stopandbreathe.ScreenState.ON_AND_UNLOCKED
 import org.junit.Assert.*
 import org.junit.Test
@@ -21,46 +18,39 @@ class MapAppTrackerTest {
         app, className, "test.reminders", isKeyboardPackage,
     )
 
-    @Test fun `fresh tracker is unknown without exempting use`() {
-        assertEquals(UNKNOWN, tracker.classification)
+    @Test fun `fresh tracker does not exempt use`() {
         assertFalse(tracker.mapAppActive)
         val session = newSession()
         session.update(60_000, ON_AND_UNLOCKED)
         assertTrue(session.isDue)
     }
 
-    @Test fun `accepted app switches replace last classification`() {
+    @Test fun `accepted app switches update map estimate`() {
         assertTrue(window())
-        assertEquals(MAP, tracker.classification)
         assertTrue(tracker.mapAppActive)
         assertTrue(window("test.other"))
-        assertEquals(OTHER, tracker.classification)
         assertFalse(tracker.mapAppActive)
         // IDs must match exactly, not by prefix.
         assertTrue(window("test.maps.other"))
-        assertEquals(OTHER, tracker.classification)
+        assertFalse(tracker.mapAppActive)
         assertTrue(window())
-        assertEquals(MAP, tracker.classification)
+        assertTrue(tracker.mapAppActive)
     }
 
     @Test fun `overlay preserves maps but own activity exits`() {
         window()
         assertFalse(window("test.reminders", "Overlay"))
         assertFalse(window("test.reminders"))
-        assertEquals(MAP, tracker.classification)
+        assertTrue(tracker.mapAppActive)
         assertTrue(window(
             "test.reminders", "test.reminders.MainActivity",
         ))
-        assertEquals(OTHER, tracker.classification)
+        assertFalse(tracker.mapAppActive)
     }
 
-    @Test fun `ignored events neither resolve nor replace state`() {
-        for (state in listOf(UNKNOWN, MAP, OTHER)) {
-            when (state) {
-                UNKNOWN -> Unit
-                MAP -> window()
-                OTHER -> window("test.other")
-            }
+    @Test fun `ignored events preserve map estimate`() {
+        for (mapActive in listOf(false, true)) {
+            window(if (mapActive) "test.maps" else "test.other")
             assertFalse(window(null))
             assertFalse(window(""))
             assertFalse(window(" "))
@@ -68,7 +58,7 @@ class MapAppTrackerTest {
             assertFalse(window(
                 "test.keyboard", isKeyboardPackage = true,
             ))
-            assertEquals(state, tracker.classification)
+            assertEquals(mapActive, tracker.mapAppActive)
         }
     }
 
