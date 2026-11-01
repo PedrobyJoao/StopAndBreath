@@ -78,7 +78,9 @@ class MainActivity : Activity() {
         label(
             "A reminder every " +
                 "${ReminderConfig.INTERVAL_MINUTES} minute(s) " +
-                "of screen-on, unlocked time. Dismiss after " +
+                "of screen-on, unlocked time outside supported " +
+                "map apps. " +
+                "Dismiss after " +
                 "${ReminderConfig.COUNTDOWN_SECONDS} seconds.",
         )
         statusText = label("")
@@ -91,8 +93,11 @@ class MainActivity : Activity() {
         label(
             "Accessibility access displays a full-screen breathing " +
                 "reminder, blocking ordinary touches until you can " +
-                "dismiss it. The service does not read screen " +
-                "content or collect or transmit personal data.",
+                "dismiss it. App/window changes identify active " +
+                "map apps using package names only. Screen-content " +
+                "access is disabled; no screen text, routes or " +
+                "locations are read. No app history is stored " +
+                "or transmitted.",
         )
         content.addView(Button(this).apply {
             text = "Open accessibility settings"
@@ -113,7 +118,11 @@ class MainActivity : Activity() {
             }
         }, LinearLayout.LayoutParams(-1, -2))
         label(
-            "Timers pause while the screen is off or locked. " +
+            "Time off, locked, or in supported map apps gradually " +
+                "clears accumulated screen time. Reminders never " +
+                "cover active map apps. A reminder already started " +
+                "keeps counting down while off or using maps, " +
+                "but pauses on the lit lock screen. " +
                 "Dismiss stays visible but disabled during the " +
                 "countdown. The next interval begins at dismissal. " +
                 "Reboot or process termination resets all progress.",
@@ -158,6 +167,13 @@ class MainActivity : Activity() {
                 "Enable accessibility access to begin reminders."
             !state.connected ->
                 "Access enabled — waiting for Android to connect."
+            state.mapAppActive &&
+                state.screenState == ScreenState.ON_AND_UNLOCKED ->
+                if (state.showing) {
+                    "Map app active — reminder hidden. " +
+                        "${state.countdownSeconds}s remaining; " +
+                        "dismiss after leaving maps."
+                } else "Idle — map app active."
             state.error != null -> state.error
             state.showing -> {
                 val timer = "${state.countdownSeconds}s remaining."

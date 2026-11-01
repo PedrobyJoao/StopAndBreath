@@ -23,27 +23,32 @@ class ReminderSession(
 
     var screenState = ScreenState.ON_AND_LOCKED
         private set
+    var mapAppActive = false
+        private set
     var intervalRemainingMillis = intervalMillis
         private set
     var countdownRemainingMillis: Long? = null
         private set
 
     val showing: Boolean get() = countdownRemainingMillis != null
+    private val idle: Boolean
+        get() = screenState != ScreenState.ON_AND_UNLOCKED ||
+            mapAppActive
     
-    // Ready to show: unlocked, interval elapsed, no current reminder.
+    // Ready: active use, interval elapsed, no current reminder.
     val isDue: Boolean
-        get() = screenState == ScreenState.ON_AND_UNLOCKED &&
-            !showing && intervalRemainingMillis == 0L
+        get() = !idle && !showing && intervalRemainingMillis == 0L
     val remainingSeconds: Long
         get() = seconds(intervalRemainingMillis)
     val countdownSeconds: Long
         get() = seconds(countdownRemainingMillis ?: 0L)
 
-    /** Account for the old state before a screen transition. */
+    /** Account for the old state before screen/app transitions. */
     fun update(
         now: Long,
         screenState: ScreenState,
         countdownPaused: Boolean = false,
+        mapAppActive: Boolean = this.mapAppActive,
     ) {
         val elapsed = updatedAt?.let { now - it } ?: 0L
         require(elapsed >= 0)
@@ -55,7 +60,7 @@ class ReminderSession(
                 countdownRemainingMillis =
                     (remaining - elapsed).coerceAtLeast(0)
             }
-        } else if (this.screenState == ScreenState.ON_AND_UNLOCKED) {
+        } else if (!idle) {
             intervalRemainingMillis = (intervalRemainingMillis -
                 elapsed).coerceAtLeast(0)
         } else {
@@ -72,7 +77,9 @@ class ReminderSession(
                     idleAccumulatedMillis + recovered
             }
         }
-        if (screenState == ScreenState.ON_AND_UNLOCKED || showing) {
+        val nextIdle = screenState != ScreenState.ON_AND_UNLOCKED ||
+            mapAppActive
+        if (!nextIdle || showing) {
             idleSince = null
         } else if (idleSince == null) {
             idleSince = now
@@ -81,6 +88,7 @@ class ReminderSession(
         }
         updatedAt = now
         this.screenState = screenState
+        this.mapAppActive = mapAppActive
         this.countdownPaused = countdownPaused
     }
 
@@ -94,9 +102,7 @@ class ReminderSession(
 
     fun dismiss(now: Long): Boolean {
         update(now, screenState)
-        if (screenState != ScreenState.ON_AND_UNLOCKED ||
-            countdownRemainingMillis != 0L
-        ) return false
+        if (idle || countdownRemainingMillis != 0L) return false
         countdownRemainingMillis = null
         intervalRemainingMillis = intervalMillis
         return true
@@ -111,7 +117,9 @@ class ReminderSession(
     fun nextUpdateDelayMillis(): Long? = when (screenState) {
         ScreenState.OFF -> null
         ScreenState.ON_AND_LOCKED -> ReminderConfig.INTERVAL_CHECK_MILLIS
-        ScreenState.ON_AND_UNLOCKED -> if (showing) {
+        ScreenState.ON_AND_UNLOCKED -> if (mapAppActive) {
+            ReminderConfig.INTERVAL_CHECK_MILLIS
+        } else if (showing) {
             ReminderConfig.COUNTDOWN_CHECK_MILLIS
         } else {
             minOf(

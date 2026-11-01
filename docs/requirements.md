@@ -37,9 +37,26 @@ Non-functional requirements:
 - App MUST not use root access
 - App MAY use accessibility service
 
-*1: Non-idle means the screen is on AND unlocked.
-Idle means the screen is off OR locked.
-The app does not attempt to detect actual user activity.
+## *1. Non-idle
+
+Non-idle means the screen is on AND unlocked AND no supported
+map app is the active window. Idle means the screen is off OR locked
+OR a supported map app is active. All usage inside that app is idle,
+not only active navigation. Merely running maps in the background
+does not qualify. The app does not detect actual user activity.
+
+App detection uses accessibility window-change package metadata.
+Screen-content access MUST stay disabled. No location permission,
+usage-access permission or additional accessibility grant is needed.
+App history MUST NOT be stored or transmitted. Detection is best
+effort and depends on Android delivering window-change events.
+
+Reminders MUST NOT cover an active supported map app. If a reminder
+has already started, hide it while maps is active and continue its
+countdown while unlocked, like screen-off behavior. A lit lock screen
+still pauses the countdown. Restore the same reminder and message
+when returning to ordinary apps; explicit dismissal is still required,
+even if the countdown finished in maps.
 
 During each uninterrupted idle period, accumulated screen time MUST
 decrease proportionally to the idle duration and configured interval:
