@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Stop&amp;Breathe</string>
+    <string name="app_name">Stop And Breathe</string>
     <string name="accessibility_description">
         Displays full-screen mindful-breathing reminders and blocks
         ordinary touches until the countdown finishes. Reminders start

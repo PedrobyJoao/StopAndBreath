@@ -74,7 +74,7 @@ class MainActivity : Activity() {
                 content.addView(this)
             }
 
-        label("Stop&Breathe", 32f)
+        label("Stop And Breathe", 32f)
         label(
             "A reminder every " +
                 "${ReminderConfig.INTERVAL_MINUTES} minute(s) " +
@@ -85,7 +85,7 @@ class MainActivity : Activity() {
         )
         statusText = label("")
         label(
-            "Enable Stop&Breathe in accessibility settings. " +
+            "Enable Stop And Breathe in accessibility settings. " +
                 "Reminders start automatically and return after " +
                 "reboot once you unlock your phone. There are no " +
                 "in-app Start or Stop controls.",

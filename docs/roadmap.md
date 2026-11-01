@@ -14,7 +14,7 @@ Simply TODOs:
   - [x] CI/CD: tests + build
   - [x] CI/CD: release
   - [x] feat: idle when using maps apps!
-  - [ ] app name is not Stop&Breathe anymore, is Stop And Breathe
+  - [x] app name is not Stop&Breathe anymore, is Stop And Breathe
   - [ ] feat: Background locker image
   - [ ] UI: better UI app
     - [ ] Be VERY clear about real permissions (pointing out

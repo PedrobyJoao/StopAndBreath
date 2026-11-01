@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "StopAndBreathe"
+rootProject.name = "Stop And Breathe"
 include(":app")
