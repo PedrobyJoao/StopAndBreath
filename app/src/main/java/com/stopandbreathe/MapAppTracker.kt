@@ -25,6 +25,8 @@ internal class MapAppTracker(
         // Preserve map idle time while typing. This package-level
         // heuristic also ignores keyboard settings activities.
         if (isKeyboardPackage) return false
+        // System UI panels (e.g. volume) are not app switches.
+        if (app == "com.android.systemui") return false
         mapAppActive = app in mapPackages
         return true
     }

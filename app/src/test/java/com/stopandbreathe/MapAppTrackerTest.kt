@@ -55,6 +55,7 @@ class MapAppTrackerTest {
             assertFalse(window(""))
             assertFalse(window(" "))
             assertFalse(window("test.reminders", "Overlay"))
+            assertFalse(window("com.android.systemui"))
             assertFalse(window(
                 "test.keyboard", isKeyboardPackage = true,
             ))

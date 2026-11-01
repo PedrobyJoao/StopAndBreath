@@ -37,9 +37,7 @@ false and follows normal startup scheduling.
 
 This cache avoids discarding an observation on reconnect.
 
-Keyboard windows do not end map idle time. Our reminder overlay's
-own window events do not change the detected app. Detection is best
-effort: Android must deliver the relevant window-change events. It
-does not inspect navigation notifications or exempt background maps,
+Detection is best effort: Android must deliver the relevant window-change
+events. It does not inspect navigation notifications or exempt background maps,
 Android Auto, unfocused split-screen panes or picture-in-picture
 solely because maps is visible.
