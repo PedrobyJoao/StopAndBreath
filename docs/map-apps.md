@@ -43,7 +43,3 @@ effort: Android must deliver the relevant window-change events. It
 does not inspect navigation notifications or exempt background maps,
 Android Auto, unfocused split-screen panes or picture-in-picture
 solely because maps is visible.
-
-The keyboard filter remains package-based, so keyboard settings
-activities are ignored too. This and unfocused pane events remain
-known limitations of the metadata-only heuristic.

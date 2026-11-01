@@ -28,6 +28,8 @@ Android components and permissions are declared in
 - Aim for simplicity, both code and architecture wise. If the requirements
   can be fulfilled in an efficient way with a simple solution, prefer it
   rather than making it more complex
+- Ignore edgecases if they're too rare and don't affects user's security.
+  Focus on making the software works simple and correct.
 - Only useful tests: don't add duplicated and not meaningful tests.
 - Security: the system must be secure. Don't write unsafe code. Be
   careful with user data and user's machine.
