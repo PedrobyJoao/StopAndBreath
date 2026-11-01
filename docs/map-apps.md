@@ -28,9 +28,22 @@ The existing accessibility service subscribes only to
 package/class metadata, not screen text, routes or location. No new
 permissions are added, and no app history is saved or transmitted.
 
+`MapAppTracker` keeps metadata filtering outside reminder timing.
+Only its last-known `UNKNOWN`, `MAP` or `OTHER` classification
+is cached in process memory. Service cleanup and reconnection reset
+the reminder session, but retain that estimate while the process
+survives. Process termination clears it. Unknown follows normal
+startup scheduling; it does not suppress reminders indefinitely.
+
+This cache avoids discarding an observation on reconnect.
+
 Keyboard windows do not end map idle time. Our reminder overlay's
 own window events do not change the detected app. Detection is best
 effort: Android must deliver the relevant window-change events. It
 does not inspect navigation notifications or exempt background maps,
 Android Auto, unfocused split-screen panes or picture-in-picture
 solely because maps is visible.
+
+The keyboard filter remains package-based, so keyboard settings
+activities are ignored too. This and unfocused pane events remain
+known limitations of the metadata-only heuristic.

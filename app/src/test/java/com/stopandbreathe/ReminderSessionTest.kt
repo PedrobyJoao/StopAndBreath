@@ -102,6 +102,8 @@ class ReminderSessionTest {
         session.update(120_000, ON_AND_UNLOCKED)
         assertTrue(session.isDue)
     }
+    
+    // --------------- Map-related timing rules ---------------
 
     @Test fun `map use recovers time then normal counting resumes`() {
         session.update(0, ON_AND_UNLOCKED)

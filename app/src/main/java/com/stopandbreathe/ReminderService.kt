@@ -38,6 +38,13 @@ data class ReminderStatus(
 
 class ReminderService : AccessibilityService() {
     companion object {
+        // Process-local estimate survives service recreation. It does
+        // not keep timing, event history, or any Android Context.
+        private val mapApps = MapAppTracker(
+            ReminderConfig.MAP_APP_PACKAGES,
+            MainActivity::class.java.name,
+        )
+
         // Main-thread only. No timing or status is persisted.
         var status = ReminderStatus()
             private set
@@ -51,7 +58,6 @@ class ReminderService : AccessibilityService() {
     private var dismissButton: Button? = null
     private var message: String? = null
     private var connected = false
-    private var mapAppActive = false
     private var receiverRegistered = false
     private var error: String? = null
 
@@ -107,22 +113,19 @@ class ReminderService : AccessibilityService() {
         if (currentScreenState() != ScreenState.ON_AND_UNLOCKED) {
             return
         }
-        val app = event.packageName?.toString() ?: return
-        // Overlay events can arrive even after our window is removed.
-        // Only our activity counts as switching back to this app.
-        val activityClass = MainActivity::class.java.name
-        if (app == packageName &&
-            event.className?.toString() != activityClass
-        ) return
-        // Typing in a map app must not end its idle period.
+        val app = event.packageName?.toString()
         val inputMethods = getSystemService(
             InputMethodManager::class.java,
         )
-        if (inputMethods.enabledInputMethodList.any {
-            it.packageName == app
-        }) return
-        mapAppActive = app in ReminderConfig.MAP_APP_PACKAGES
-        updateReminder()
+        if (mapApps.onWindowChanged(
+            app = app,
+            className = event.className?.toString(),
+            ownPackage = packageName,
+            isKeyboardPackage =
+                inputMethods.enabledInputMethodList.any {
+                    it.packageName == app
+                },
+        )) updateReminder()
     }
 
     override fun onInterrupt() {
@@ -151,7 +154,7 @@ class ReminderService : AccessibilityService() {
         if (!connected) return
         session.update(
             SystemClock.elapsedRealtime(), screenState,
-            mapAppActive = mapAppActive,
+            mapAppActive = mapApps.mapAppActive,
         )
         var delay = session.nextUpdateDelayMillis()
 
@@ -250,7 +253,7 @@ class ReminderService : AccessibilityService() {
                 session.update(
                     SystemClock.elapsedRealtime(),
                     currentScreenState(),
-                    mapAppActive = mapAppActive,
+                    mapAppActive = mapApps.mapAppActive,
                 )
                 if (session.dismiss(SystemClock.elapsedRealtime())) {
                     removeOverlay()
@@ -339,7 +342,6 @@ class ReminderService : AccessibilityService() {
 
     private fun cleanup() {
         connected = false
-        mapAppActive = false
         handler.removeCallbacksAndMessages(null)
         if (receiverRegistered) {
             unregisterReceiver(screenReceiver)
