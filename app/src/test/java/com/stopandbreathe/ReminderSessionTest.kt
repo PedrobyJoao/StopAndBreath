@@ -102,6 +102,90 @@ class ReminderSessionTest {
         session.update(120_000, ON_AND_UNLOCKED)
         assertTrue(session.isDue)
     }
+    
+    // --------------- Map-related timing rules ---------------
+
+    @Test fun `map use recovers time then normal counting resumes`() {
+        session.update(0, ON_AND_UNLOCKED)
+        session.update(30_000, ON_AND_UNLOCKED, mapAppActive = true)
+        assertEquals(30_000L, session.intervalRemainingMillis)
+        assertEquals(ON_AND_UNLOCKED, session.screenState)
+        assertTrue(session.mapAppActive)
+
+        // 30s in maps recovers half of the 30s previously used.
+        session.update(60_000, ON_AND_UNLOCKED, mapAppActive = false)
+        assertEquals(45_000L, session.intervalRemainingMillis)
+        session.update(104_999, ON_AND_UNLOCKED)
+        assertFalse(session.isDue)
+        session.update(105_000, ON_AND_UNLOCKED)
+        assertTrue(session.isDue)
+    }
+
+    @Test fun `maps lock and screen off form one idle period`() {
+        session.update(0, ON_AND_UNLOCKED)
+        session.update(30_000, ON_AND_UNLOCKED, mapAppActive = true)
+        session.update(40_000, ON_AND_UNLOCKED)
+        assertEquals(35_000L, session.intervalRemainingMillis)
+        session.update(45_000, ON_AND_LOCKED, mapAppActive = false)
+        session.update(50_000, OFF)
+        session.update(60_000, ON_AND_UNLOCKED, mapAppActive = true)
+        assertEquals(45_000L, session.intervalRemainingMillis)
+        // A full interval of uninterrupted idle clears all usage.
+        session.update(90_000, ON_AND_UNLOCKED, mapAppActive = false)
+        assertEquals(60_000L, session.intervalRemainingMillis)
+    }
+
+    @Test fun `entering maps when due suppresses and recovers it`() {
+        session.update(0, ON_AND_UNLOCKED)
+        session.update(60_000, ON_AND_UNLOCKED, mapAppActive = true)
+        assertFalse(session.isDue)
+        assertFalse(session.showing)
+        // No busy loop when the interval is zero but maps is active.
+        assertEquals(
+            ReminderConfig.INTERVAL_CHECK_MILLIS,
+            session.nextUpdateDelayMillis(),
+        )
+        session.update(90_000, ON_AND_UNLOCKED, mapAppActive = false)
+        assertEquals(30_000L, session.intervalRemainingMillis)
+        assertFalse(session.isDue)
+    }
+
+    @Test fun `existing reminder counts down in maps and returns`() {
+        showReminder()
+        session.update(63_000, ON_AND_UNLOCKED, mapAppActive = true)
+        assertEquals(7_000L, session.countdownRemainingMillis)
+        session.update(65_000, ON_AND_UNLOCKED, mapAppActive = false)
+        assertEquals(5_000L, session.countdownRemainingMillis)
+        assertTrue(session.showing)
+        assertFalse(session.dismiss(65_000))
+        assertTrue(session.dismiss(70_000))
+    }
+
+    @Test fun `finished reminder in maps still needs dismissal`() {
+        showReminder()
+        session.update(63_000, ON_AND_UNLOCKED, mapAppActive = true)
+        session.update(130_000, ON_AND_UNLOCKED)
+        assertEquals(0L, session.countdownSeconds)
+        assertEquals(0L, session.intervalRemainingMillis)
+        assertTrue(session.showing)
+        assertFalse(session.dismiss(130_000))
+        session.update(140_000, ON_AND_UNLOCKED, mapAppActive = false)
+        assertTrue(session.showing)
+        assertTrue(session.dismiss(140_000))
+        assertEquals(60_000L, session.intervalRemainingMillis)
+    }
+
+    @Test fun `maps does not override lock countdown pause`() {
+        showReminder()
+        session.update(63_000, ON_AND_UNLOCKED, mapAppActive = true)
+        session.update(65_000, ON_AND_LOCKED)
+        session.update(100_000, OFF)
+        assertEquals(5_000L, session.countdownRemainingMillis)
+        assertNull(session.nextUpdateDelayMillis())
+        session.update(102_000, ON_AND_UNLOCKED)
+        assertEquals(3_000L, session.countdownRemainingMillis)
+        assertTrue(session.mapAppActive)
+    }
 
     @Test fun `countdown pause does not count as idle`() {
         session.update(0, ON_AND_UNLOCKED)

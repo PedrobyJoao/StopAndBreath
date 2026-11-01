@@ -19,6 +19,7 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -28,6 +29,7 @@ import android.widget.TextView
 data class ReminderStatus(
     val connected: Boolean = false,
     val screenState: ScreenState = ScreenState.ON_AND_LOCKED,
+    val mapAppActive: Boolean = false,
     val showing: Boolean = false,
     val remainingSeconds: Long = 0,
     val countdownSeconds: Long = 0,
@@ -36,6 +38,13 @@ data class ReminderStatus(
 
 class ReminderService : AccessibilityService() {
     companion object {
+        // Process-local estimate survives service recreation. It does
+        // not keep timing, event history, or any Android Context.
+        private val mapApps = MapAppTracker(
+            ReminderConfig.MAP_APP_PACKAGES,
+            MainActivity::class.java.name,
+        )
+
         // Main-thread only. No timing or status is persisted.
         var status = ReminderStatus()
             private set
@@ -94,11 +103,30 @@ class ReminderService : AccessibilityService() {
         updateReminder()
     }
 
-    // This service does not subscribe to accessibility events or read
-    // window content. Its only accessibility feature is its overlay.
+    // Only package/class metadata is used, never screen content.
     override fun onAccessibilityEvent(
         event: AccessibilityEvent?,
-    ) = Unit
+    ) {
+        if (!connected || event?.eventType !=
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
+        ) return
+        if (currentScreenState() != ScreenState.ON_AND_UNLOCKED) {
+            return
+        }
+        val app = event.packageName?.toString()
+        val inputMethods = getSystemService(
+            InputMethodManager::class.java,
+        )
+        if (mapApps.onWindowChanged(
+            app = app,
+            className = event.className?.toString(),
+            ownPackage = packageName,
+            isKeyboardPackage =
+                inputMethods.enabledInputMethodList.any {
+                    it.packageName == app
+                },
+        )) updateReminder()
+    }
 
     override fun onInterrupt() {
         // Interrupting feedback must not dismiss a reminder.
@@ -124,11 +152,16 @@ class ReminderService : AccessibilityService() {
     ) {
         handler.removeCallbacks(update)
         if (!connected) return
-        session.update(SystemClock.elapsedRealtime(), screenState)
+        session.update(
+            SystemClock.elapsedRealtime(), screenState,
+            mapAppActive = mapApps.mapAppActive,
+        )
         var delay = session.nextUpdateDelayMillis()
 
-        if (session.screenState != ScreenState.ON_AND_UNLOCKED) {
-            // Never cover the keyguard or keep the screen awake.
+        if (session.screenState != ScreenState.ON_AND_UNLOCKED ||
+            session.mapAppActive
+        ) {
+            // Never cover the keyguard or an active map app.
             // Keep the reminder and message while hiding the window.
             removeOverlay()
         } else {
@@ -174,6 +207,7 @@ class ReminderService : AccessibilityService() {
         }
         dismissButton?.isEnabled =
             session.screenState == ScreenState.ON_AND_UNLOCKED &&
+                !session.mapAppActive &&
                 remaining == 0L
     }
 
@@ -219,6 +253,7 @@ class ReminderService : AccessibilityService() {
                 session.update(
                     SystemClock.elapsedRealtime(),
                     currentScreenState(),
+                    mapAppActive = mapApps.mapAppActive,
                 )
                 if (session.dismiss(SystemClock.elapsedRealtime())) {
                     removeOverlay()
@@ -297,6 +332,7 @@ class ReminderService : AccessibilityService() {
         status = ReminderStatus(
             connected = connected,
             screenState = session.screenState,
+            mapAppActive = session.mapAppActive,
             showing = session.showing,
             remainingSeconds = session.remainingSeconds,
             countdownSeconds = session.countdownSeconds,
