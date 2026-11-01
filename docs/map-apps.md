@@ -1,5 +1,7 @@
 # Map-app idle time
 
+Map apps are seen as idle time.
+
 `ReminderConfig.MAP_APP_PACKAGES` is the editable list of supported
 Android package IDs. It covers general maps, road navigation,
 open-source maps, hiking, trekking and cycling. All usage inside a
@@ -27,15 +29,6 @@ The existing accessibility service subscribes only to
 `canRetrieveWindowContent` remains `false` there. The service examines
 package/class metadata, not screen text, routes or location. No new
 permissions are added, and no app history is saved or transmitted.
-
-`MapAppTracker` keeps metadata filtering outside reminder timing.
-Only its last-known map-active boolean is cached in process memory.
-Service cleanup and reconnection reset
-the reminder session, but retain that estimate while the process
-survives. Process termination clears it. A fresh process defaults to
-false and follows normal startup scheduling.
-
-This cache avoids discarding an observation on reconnect.
 
 Detection is best effort: Android must deliver the relevant window-change
 events. It does not inspect navigation notifications or exempt background maps,

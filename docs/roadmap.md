@@ -13,7 +13,7 @@ Simply TODOs:
   - [x] tests: review if more useful tests shall be added
   - [x] CI/CD: tests + build
   - [x] CI/CD: release
-  - [ ] feat: idle when using maps apps!
+  - [x] feat: idle when using maps apps!
   - [ ] app name is not Stop&Breathe anymore, is Stop And Breathe
   - [ ] feat: Background locker image
   - [ ] UI: better UI app
