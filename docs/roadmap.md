@@ -15,21 +15,21 @@ Simply TODOs:
   - [x] CI/CD: release
   - [x] feat: idle when using maps apps!
   - [x] app name is not Stop&Breathe anymore, is Stop And Breathe
-  - [ ] feat: Background locker image
   - [ ] UI: better UI app
     - [ ] Be VERY clear about real permissions (pointing out
           line of code where we're setting) and what is asked by android
+    - [ ] simple how to give accessibility permission
+    - [ ] improve fonts of message (not hardcoded)
   - [ ] README (written by me)
     - [ ] Document supported android version
     - [ ] Be VERY clear about real permissions (pointing out
           line of code where we're setting) and what is asked by android
 - [ ] v0.2
+  - [ ] feat: Background locker image
   - [ ] feat(UI-settings): automatic language detection
-  - [ ] feat: nix flake check and add to CI/CD?
   - [ ] CI/CD: security scan
     - [ ] feat: mention security scan in the app
     - [ ] feat: mention security scan in the README
-  - [ ] feat: narrow accessibility permission (decision)
   - [ ] github: unallow direct commit to main/release branches
   - [ ] github: unallow merge to main without tests+build passing
   - [ ] Icon
@@ -50,3 +50,4 @@ Simply TODOs:
   - [ ] feat: maybe allow users to choose if they want strict version
         with accessibility permission or less strict version without accessibility
         permission.
+  - [ ] feat: nix flake check and add to CI/CD?
