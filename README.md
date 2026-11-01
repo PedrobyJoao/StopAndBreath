@@ -33,6 +33,10 @@ Breathing out, I take care of my mind and body
 
 ## How it works
 
+### Permissons
+
+## Run locally
+
 ## License
 
 Licensed under the [MIT License](LICENSE).
