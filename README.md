@@ -33,9 +33,99 @@ Breathing out, I take care of my mind and body
 
 ## How it works
 
+After every 15 minutes of phone usage, a reminder will be shown with a
+mindful message and a countdown timer with a dismissal button (initially
+disabled). The dismissal button is only enabled after 20 seconds.
+
+During this interval, you won't be able to change windows, check notifications
+or close the reminder itself.
+
+> In the next versions, we'll have different reminder levels (mini, long,
+> rest) and they will be configurable by users
+
+Time away from your phone helps reset the interval, partially or completely.
+
+Some apps are considered as idle time, so using them won't add to your
+accumulated screen time and reminders won't be shown (e.g.: maps,
+banks, clock...).
+
 ### Permissons
 
+I tried to use as few permissions as possible. Although, to get to
+the level of strictness that I wanted, the app needed to be used as an
+accessibility service.
+
+Android doesn't have a very narrowed set of permissions for accessibility
+services, so even though we're only displaying the reminder screen and
+detecting window changes (for idle apps), Android will ask users to
+provide super broad permissions which btw one of them is
+literally set to `false` in the app configuration itself.
+
+The permissions set by the app as an accessibility service are:
+
+```
+android:canRetrieveWindowContent="false"
+android:accessibilityEventTypes="typeWindowStateChanged"
+android:accessibilityFeedbackType="feedbackGeneric"
+```
+
+> See app configured permissions here: `./app/src/main/res/xml/reminder_accessibility_service.xml`
+
+For the end user, Android will ask you to give the following
+permissions to the app:
+
+1. View and control screen: it can read screen content and display
+   content over other apps
+2. View and perform actions: it can track your interactions with an app
+   or a hardware sensor, and interact with apps on your behalf
+
+While literally in the app config, we set `android:canRetrieveWindowContent="false"`.
+
+**So no, the app isn't configured to read your screen content!!!**
+
+The app only needs ability to:
+
+- Display over other apps for the reminder
+- Track window changes for apps considered as idle time
+
+You can read [How: overlay accessibility](./docs/how.md) and [Other possible
+Hows](./docs/possible_hows.md) to see more.
+
+## Security and data privacy
+
+Besides the narrow permissions configured in the app as explained above,
+being open source is already something towards supporting privacy and security.
+
+But open sourcing is not enough, so we plan to have in the CI/CD some sec scanners
+to identify vulnerabilities, and possibly, bad usage of user data.
+
+It will come in the next version: v0.2
+
 ## Run locally
+
+TODO:
+
+### Features:
+
+- [x] basic reminder functionality with a _non-annoying_ idle
+      time tracking
+- [x] maps apps are considered idle time. No
+      reminder shall be shown while using maps apps!
+- [ ] add more idle apps: banks, calculator, clock...
+- [ ] automatic language detection
+  - [ ] some different languages: english, pt-br, spanish...
+- [ ] calendar: if you have any specific work to do, e.g.: meeting,
+      in your cellphone, you can select a date and time to disable
+      the reminder.
+  - [ ] google calendar integration: events disable reminder
+- [ ] reminder levels (mini, long and rest)
+  - [ ] strictness levels for specific days
+- [ ] EXTREME-STRICT option: save last reminder info when phone goes off,
+      keep blocking on recovery
+- [ ] feat: kids version (different messages)
+- [ ] maybe allow users to choose if they want strict version
+      with accessibility permission or less strict version without accessibility
+      permission.
 
 ## License
 
