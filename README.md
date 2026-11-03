@@ -1,5 +1,7 @@
 # Stop And Breathe - Android
 
+> Requires Android 8.0+
+
 Sometimes, we lose control of our smartphone usage. Suddenly, 1 hour has
 passed and you have been just mindless scrolling through everywhere
 and nowhere for no specific reason at all.
@@ -103,7 +105,42 @@ It will come in the next version: v0.2
 
 ## Run locally
 
-TODO:
+Requires Android 8.0+ (API 26) on a device or emulator.
+
+### Standard setup
+
+Install JDK 21 and the Android SDK (via Android Studio):
+
+- Android SDK Platform 36
+- Build Tools 36.0.0
+- Platform Tools
+
+Set `ANDROID_HOME` to your Android SDK directory.
+
+### Nix setup
+
+With Nix flakes enabled, enter the development shell:
+
+```sh
+nix develop
+```
+
+This provides Java, Android Studio, and the Android SDK.
+
+### Build, run, and test
+
+Run these from the project root, using either setup above:
+
+```sh
+# Build the debug APK
+./gradlew assembleDebug
+
+# Install on a running emulator or USB-debugging device
+./gradlew installDebug
+
+# Run unit tests
+./gradlew testDebugUnitTest
+```
 
 ### Features:
 
