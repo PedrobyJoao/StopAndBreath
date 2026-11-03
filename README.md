@@ -1,6 +1,4 @@
-# Stop And Breathe - Android
-
-> Requires Android 8.0+
+# Stop And Breathe - Android 8.0+
 
 Sometimes, we lose control of our smartphone usage. Suddenly, 1 hour has
 passed and you have been just mindless scrolling through everywhere
