@@ -1,6 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Stop And Breathe</string>
+    <string name="introduction">
+        Stop And Breathe is an open-source app that interrupts
+        mindless scrolling with a short breathing break. Every
+        %1$d minutes of
+        screen-on, unlocked time, it displays a reminder that you can
+        dismiss after %2$d seconds.
+    </string>
+    <string name="introduction_preview">
+        Stop And Breathe is an open-source app that interrupts
+        mindless scrolling with a short breathing break.
+    </string>
+    <string name="enable_accessibility">Enable accessibility</string>
+    <string name="security_title">Read more about app\'s security</string>
+    <string name="close_dialog">Close</string>
+    <string name="accessibility_title">Accessibility service</string>
+    <string name="open_source_summary">
+        Anyone can inspect the source code. Open source does not mean
+        the app has been independently audited.
+    </string>
+    <string name="view_source">View source code ↗</string>
+    <string name="screen_content_summary">
+        Screen-content retrieval is disabled. The service declares
+        canRetrieveWindowContent=\"false\" and is not granted that
+        capability.
+    </string>
+    <string name="view_configuration">See the configuration ↗</string>
+    <string name="accessibility_summary">
+        Android doesn\'t have much narrow permissions for accessbility
+        services, so it asks for more permissions than the app is 
+        actually configured to use.
+        This app is configured to:\n\n
+        1. Display blocking reminders over ordinary apps.\n\n
+        2. Receive window-change metadata to recognize apps being 
+        used that should be excluded from accumulated screen time.\n\n
+        <b>Screen-content retrieval is disabled!</b>
+    </string>
+    <string name="privacy_summary">
+        App detection uses only package and class metadata from window
+        changes. Screen text, routes and locations are not read.
+        No app history is stored or transmitted. No location or
+        internet permission is requested.
+    </string>
+    <string name="blocking_summary">
+        Blocking is best-effort. System controls, emergency screens
+        and notifications may remain available.
+    </string>
+    <string name="security_scan_todo">
+        TODO: automated security scanning in our build pipeline.
+        Not implemented yet.
+    </string>
+    <string name="automatic_reminders_title">
+        Automatic reminders
+    </string>
+    <string name="automatic_reminders">
+        Reminders start automatically once access is enabled,
+        including after reboot and unlock. To stop them, turn off
+        the service in Android accessibility settings.
+    </string>
+    <string name="manage_accessibility">
+        Manage accessibility access
+    </string>
+    <string name="early_version_title">Coming features</string>
+    <string name="upcoming_features_placeholder">
+        This is an early version. Coming features will be listed here.
+    </string>
+    <string name="app_version">Version %1$s</string>
+    <string name="report_problem">Report a problem ↗</string>
+    <string name="setup_title">Enable accessibility</string>
+    <string name="setup_steps">
+        1. Tap “Open settings” below.\n\n
+        2. Find Stop And Breathe, usually under “Installed apps” or
+        “Downloaded apps”.\n\n
+        3. Turn on the service and review Android’s confirmation.
+        This allows reminders to block ordinary touches until their
+        countdown ends.\n\n
+        4. Return here to check that reminders are active.\n\n
+        Settings names vary by device. You can turn off the same
+        service at any time to stop reminders.
+    </string>
+    <string name="not_now">Not now</string>
+    <string name="open_settings">Open settings</string>
+    <string name="settings_unavailable">
+        Accessibility settings are unavailable on this device.
+    </string>
+    <string name="browser_unavailable">
+        No app is available to open this link.
+    </string>
+    <string name="status_access_needed">
+        Enable accessibility to start reminders.
+    </string>
+    <string name="status_connecting">
+        Access enabled — waiting for Android to connect.
+    </string>
+    <string name="status_next_reminder">
+        Reminders active · next in %1$s.
+    </string>
+    <string name="status_maps_idle">Resting — map app active.</string>
+    <string name="status_maps_reminder">
+        Map app active — reminder hidden. %1$s remaining;
+        dismiss after leaving maps.
+    </string>
+    <string name="status_reminder_active">
+        Breathing reminder active — %1$s remaining.
+    </string>
+    <string name="status_reminder_paused">
+        Reminder paused on the lock screen — %1$s remaining.
+    </string>
+    <string name="status_reminder_hidden">
+        Reminder hidden while the screen is off — %1$s remaining.
+    </string>
+    <string name="status_ready_to_dismiss">
+        Breathing reminder ready to dismiss.
+    </string>
+    <string name="status_idle">
+        Resting — waiting for the screen to be on and unlocked.
+    </string>
+    <string name="duration_seconds">%1$d sec</string>
+    <string name="duration_minutes_seconds">%1$d min %2$d sec</string>
     <string name="accessibility_description">
         Displays full-screen mindful-breathing reminders and blocks
         ordinary touches until the countdown finishes. Reminders start

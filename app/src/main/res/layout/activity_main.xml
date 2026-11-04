@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            style="@style/Breathe.Title"
+            android:layout_marginTop="12dp"
+            android:text="@string/app_name" />
+
+        <TextView
+            android:id="@+id/introduction"
+            style="@style/Breathe.Body"
+            android:layout_marginTop="16dp"
+            android:text="@string/introduction_preview" />
+
+        <LinearLayout
+            style="@style/Breathe.Card"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                style="@style/Breathe.Heading"
+                android:text="@string/accessibility_title" />
+
+            <TextView
+                style="@style/Breathe.Body"
+                android:layout_marginTop="11dp"
+                android:text="@string/accessibility_summary" />
+
+            <TextView
+                android:id="@+id/security_details"
+                style="@style/Breathe.Link"
+                android:layout_marginTop="8dp"
+                android:text="@string/security_title" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/Breathe.Card"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/status_background">
+
+            <TextView
+                android:id="@+id/reminder_status"
+                style="@style/Breathe.Caption"
+                android:text="@string/status_access_needed"
+                android:textColor="@color/text_primary" />
+
+            <Button
+                android:id="@+id/enable_accessibility"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="@color/accent"
+                android:minHeight="48dp"
+                android:text="@string/enable_accessibility"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/Breathe.Card"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                style="@style/Breathe.Heading"
+                android:text="@string/automatic_reminders_title" />
+
+            <TextView
+                style="@style/Breathe.Caption"
+                android:layout_marginTop="12dp"
+                android:text="@string/automatic_reminders" />
+
+            <TextView
+                android:id="@+id/manage_accessibility"
+                style="@style/Breathe.Link"
+                android:text="@string/manage_accessibility" />
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/Breathe.Card"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                style="@style/Breathe.Heading"
+                android:text="@string/early_version_title" />
+
+            <TextView
+                style="@style/Breathe.Caption"
+                android:layout_marginTop="12dp"
+                android:text="@string/upcoming_features_placeholder"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/app_version"
+            style="@style/Breathe.Caption"
+            android:layout_marginTop="24dp" />
+
+        <TextView
+            android:id="@+id/report_link"
+            style="@style/Breathe.Link"
+            android:text="@string/report_problem" />
+    </LinearLayout>
+</ScrollView>

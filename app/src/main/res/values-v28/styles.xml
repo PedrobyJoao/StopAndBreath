@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Breathe.Title" parent="Breathe.Title.Base">
+        <item name="android:accessibilityHeading">true</item>
+    </style>
+    <style name="Breathe.Heading" parent="Breathe.Heading.Base">
+        <item name="android:accessibilityHeading">true</item>
+    </style>
+</resources>

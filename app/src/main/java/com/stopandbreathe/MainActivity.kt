@@ -2,26 +2,30 @@ package com.stopandbreathe
 
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
-import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.view.View
 import android.view.WindowInsets
 import android.view.accessibility.AccessibilityManager
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 
 class MainActivity : Activity() {
+    private val repository =
+        "https://github.com/PedrobyJoao/StopAndBreath"
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var statusText: TextView
+    private lateinit var enableButton: Button
 
     private val refresh = object : Runnable {
         override fun run() {
@@ -34,106 +38,99 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val content = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(dp(24), dp(24), dp(24), dp(24))
-        }
-        val scroll = ScrollView(this).apply {
-            setBackgroundColor(Color.rgb(250, 250, 247))
-            addView(content)
-            setOnApplyWindowInsetsListener { view, insets ->
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    val bars = insets.getInsets(
-                        WindowInsets.Type.systemBars() or
-                            WindowInsets.Type.displayCutout(),
-                    )
-                    view.setPadding(
-                        bars.left, bars.top, bars.right, bars.bottom,
-                    )
-                } else {
-                    @Suppress("DEPRECATION")
-                    view.setPadding(
-                        insets.systemWindowInsetLeft,
-                        insets.systemWindowInsetTop,
-                        insets.systemWindowInsetRight,
-                        insets.systemWindowInsetBottom,
-                    )
-                }
-                insets
+        setContentView(R.layout.activity_main)
+        val scroll = findViewById<ScrollView>(R.id.main_scroll)
+        scroll.setOnApplyWindowInsetsListener { view, insets ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val bars = insets.getInsets(
+                    WindowInsets.Type.systemBars() or
+                        WindowInsets.Type.displayCutout(),
+                )
+                view.setPadding(
+                    bars.left, bars.top, bars.right, bars.bottom,
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                view.setPadding(
+                    insets.systemWindowInsetLeft,
+                    insets.systemWindowInsetTop,
+                    insets.systemWindowInsetRight,
+                    insets.systemWindowInsetBottom,
+                )
             }
+            insets
         }
-        setContentView(scroll)
         scroll.requestApplyInsets()
 
-        fun label(value: String, size: Float = 16f): TextView =
-            TextView(this).apply {
-                text = value
-                textSize = size
-                setTextColor(Color.rgb(30, 48, 42))
-                setPadding(0, dp(8), 0, dp(12))
-                content.addView(this)
+        findViewById<TextView>(R.id.introduction).text = getString(
+            R.string.introduction,
+            ReminderConfig.INTERVAL_MINUTES,
+            ReminderConfig.COUNTDOWN_SECONDS,
+        )
+        statusText = findViewById(R.id.reminder_status)
+        enableButton = findViewById<Button>(R.id.enable_accessibility)
+            .apply { setOnClickListener { showSetup() } }
+        findViewById<View>(R.id.manage_accessibility)
+            .setOnClickListener {
+                if (accessibilityEnabled()) openSettings()
+                else showSetup()
             }
+        findViewById<View>(R.id.security_details)
+            .setOnClickListener { showSecurity() }
+        link(findViewById(R.id.report_link), "$repository/issues/new")
+        @Suppress("DEPRECATION")
+        val version = packageManager.getPackageInfo(packageName, 0)
+            .versionName.orEmpty()
+        findViewById<TextView>(R.id.app_version).text = getString(
+            R.string.app_version, version,
+        )
+    }
 
-        label("Stop And Breathe", 32f)
-        label(
-            "A reminder every " +
-                "${ReminderConfig.INTERVAL_MINUTES} minute(s) " +
-                "of screen-on, unlocked time outside supported " +
-                "map apps. " +
-                "Dismiss after " +
-                "${ReminderConfig.COUNTDOWN_SECONDS} seconds.",
-        )
-        statusText = label("")
-        label(
-            "Enable Stop And Breathe in accessibility settings. " +
-                "Reminders start automatically and return after " +
-                "reboot once you unlock your phone. There are no " +
-                "in-app Start or Stop controls.",
-        )
-        label(
-            "Accessibility access displays a full-screen breathing " +
-                "reminder, blocking ordinary touches until you can " +
-                "dismiss it. App/window changes identify active " +
-                "map apps using package names only. Screen-content " +
-                "access is disabled; no screen text, routes or " +
-                "locations are read. No app history is stored " +
-                "or transmitted.",
-        )
-        content.addView(Button(this).apply {
-            text = "Open accessibility settings"
-            isAllCaps = false
-            setOnClickListener {
-                try {
-                    val intent = Intent(
-                        Settings.ACTION_ACCESSIBILITY_SETTINGS,
-                    )
-                    startActivity(intent)
-                } catch (_: ActivityNotFoundException) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Accessibility settings are unavailable.",
-                        Toast.LENGTH_LONG,
-                    ).show()
-                }
+    private fun showSetup() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.setup_title)
+            .setMessage(R.string.setup_steps)
+            .setNegativeButton(R.string.not_now, null)
+            .setPositiveButton(R.string.open_settings) { _, _ ->
+                openSettings()
             }
-        }, LinearLayout.LayoutParams(-1, -2))
-        label(
-            "Time off, locked, or in supported map apps gradually " +
-                "clears accumulated screen time. Reminders never " +
-                "cover active map apps. A reminder already started " +
-                "keeps counting down while off or using maps, " +
-                "but pauses on the lit lock screen. " +
-                "Dismiss stays visible but disabled during the " +
-                "countdown. The next interval begins at dismissal. " +
-                "Reboot or process termination resets all progress.",
+            .show()
+    }
+
+    private fun showSecurity() {
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(R.string.security_title)
+            .setView(R.layout.dialog_security)
+            .setPositiveButton(R.string.close_dialog, null)
+            .show()
+        link(dialog.findViewById(R.id.source_link), repository)
+        link(
+            dialog.findViewById(R.id.configuration_link),
+            "$repository/blob/main/app/src/main/res/xml/" +
+                "reminder_accessibility_service.xml#L6",
         )
-        label(
-            "Blocking is best-effort: system controls, emergency " +
-                "screens and notifications may remain available. " +
-                "You can revoke accessibility access in Settings. " +
-                "Android 8.0 or newer is required; behavior varies " +
-                "across devices.",
-        )
+    }
+
+    private fun openSettings() = openIntent(
+        Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS),
+        R.string.settings_unavailable,
+    )
+
+    private fun link(view: View, url: String) {
+        view.setOnClickListener {
+            openIntent(
+                Intent(Intent.ACTION_VIEW, Uri.parse(url)),
+                R.string.browser_unavailable,
+            )
+        }
+    }
+
+    private fun openIntent(intent: Intent, error: Int) {
+        try {
+            startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onResume() {
@@ -161,36 +158,50 @@ class MainActivity : Activity() {
     }
 
     private fun updateStatus() {
+        val enabled = accessibilityEnabled()
+        enableButton.visibility = if (enabled) View.GONE
+        else View.VISIBLE
         val state = ReminderService.status
         statusText.text = when {
-            !accessibilityEnabled() ->
-                "Enable accessibility access to begin reminders."
+            !enabled -> getString(R.string.status_access_needed)
             !state.connected ->
-                "Access enabled — waiting for Android to connect."
+                getString(R.string.status_connecting)
+            state.error != null -> state.error
             state.mapAppActive &&
                 state.screenState == ScreenState.ON_AND_UNLOCKED ->
                 if (state.showing) {
-                    "Map app active — reminder hidden. " +
-                        "${state.countdownSeconds}s remaining; " +
-                        "dismiss after leaving maps."
-                } else "Idle — map app active."
-            state.error != null -> state.error
+                    getString(
+                        R.string.status_maps_reminder,
+                        duration(state.countdownSeconds),
+                    )
+                } else getString(R.string.status_maps_idle)
             state.showing -> {
-                val timer = "${state.countdownSeconds}s remaining."
-                if (state.screenState != ScreenState.ON_AND_UNLOCKED) {
-                    "Reminder paused — $timer"
-                } else if (state.countdownSeconds > 0) {
-                    "Breathing reminder active — $timer"
-                } else "Breathing reminder ready to dismiss."
+                val message = when {
+                    state.screenState == ScreenState.ON_AND_LOCKED ->
+                        R.string.status_reminder_paused
+                    state.screenState == ScreenState.OFF ->
+                        R.string.status_reminder_hidden
+                    state.countdownSeconds > 0 ->
+                        R.string.status_reminder_active
+                    else -> R.string.status_ready_to_dismiss
+                }
+                getString(message, duration(state.countdownSeconds))
             }
             state.screenState != ScreenState.ON_AND_UNLOCKED ->
-                "Paused — waiting for the screen to be on " +
-                    "and unlocked."
-            else -> "Next reminder in ${state.remainingSeconds}s " +
-                "of screen-on, unlocked time."
+                getString(R.string.status_idle)
+            else -> getString(
+                R.string.status_next_reminder,
+                duration(state.remainingSeconds),
+            )
         }
     }
 
-    private fun dp(value: Int): Int =
-        (value * resources.displayMetrics.density).toInt()
+    private fun duration(seconds: Long): String = if (seconds < 60) {
+        getString(R.string.duration_seconds, seconds)
+    } else {
+        getString(
+            R.string.duration_minutes_seconds,
+            seconds / 60, seconds % 60,
+        )
+    }
 }

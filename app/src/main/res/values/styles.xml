@@ -3,10 +3,56 @@
     <style name="Theme.StopAndBreathe.Base"
         parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
-        <item name="android:colorAccent">#246B5B</item>
+        <item name="android:colorAccent">@color/accent</item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowBackground">#FAFAF7</item>
+        <item name="android:windowBackground">
+            @color/page_background
+        </item>
     </style>
     <style name="Theme.StopAndBreathe"
         parent="Theme.StopAndBreathe.Base" />
+
+    <style name="Breathe" />
+    <style name="Breathe.Body">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+    </style>
+    <style name="Breathe.Title.Base" parent="Breathe.Body">
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="Breathe.Title" parent="Breathe.Title.Base" />
+    <style name="Breathe.Heading.Base" parent="Breathe.Body">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="Breathe.Heading" parent="Breathe.Heading.Base" />
+    <style name="Breathe.Caption" parent="Breathe.Body">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_secondary</item>
+    </style>
+    <style name="Breathe.Link" parent="Breathe.Body">
+        <item name="android:textColor">@color/accent</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">
+            ?android:attr/selectableItemBackground
+        </item>
+    </style>
+    <style name="Breathe.Card">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:background">
+            @drawable/card_background
+        </item>
+    </style>
 </resources>
