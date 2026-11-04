@@ -2,10 +2,9 @@
 <resources>
     <string name="introduction">
         Stop And Breathe is an open-source app that interrupts
-        mindless scrolling with a short breathing break. Every
-        %1$d minutes of
-        screen-on, unlocked time, it displays a reminder that you can
-        dismiss after %2$d seconds.
+        mindless phone usage with a short breathing break. Every
+        %1$d minutes of screen-on, unlocked time, it displays a 
+        reminder that you can dismiss after %2$d seconds.
     </string>
     <string name="introduction_preview">
         Stop And Breathe is an open-source app that interrupts

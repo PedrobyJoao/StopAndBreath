@@ -99,10 +99,10 @@ class MainActivity : Activity() {
 
     private fun showSecurity() {
         val dialog = AlertDialog.Builder(this)
-            .setTitle(R.string.security_title)
             .setView(R.layout.dialog_security)
             .setPositiveButton(R.string.close_dialog, null)
             .show()
+        dialog.window?.setTitle(getString(R.string.security_title))
         link(dialog.findViewById(R.id.source_link), repository)
         link(
             dialog.findViewById(R.id.configuration_link),

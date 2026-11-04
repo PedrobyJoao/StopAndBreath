@@ -7,10 +7,11 @@
     </string>
     <string name="view_source">View source code ↗</string>
     <string name="screen_content_summary">
-        Screen-content retrieval is disabled. The service declares
-        canRetrieveWindowContent=\"false\" and is not granted that
-        capability.
+        Screen-content retrieval is disabled. The service
+        declares\n\n<tt>canRetrieveWindowContent=\"false\"</tt>\n\nand is not
+        granted that capability.
     </string>
+
     <string name="view_configuration">See the configuration ↗</string>
     <string name="privacy_summary">
         App detection uses only package and class metadata from window
