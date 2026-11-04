@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="close_dialog">Close</string>
+    <string name="open_source_summary">
+        Anyone can inspect the source code. Open source does not mean
+        the app has been independently audited.
+    </string>
+    <string name="view_source">View source code ↗</string>
+    <string name="screen_content_summary">
+        Screen-content retrieval is disabled. The service declares
+        canRetrieveWindowContent=\"false\" and is not granted that
+        capability.
+    </string>
+    <string name="view_configuration">See the configuration ↗</string>
+    <string name="privacy_summary">
+        App detection uses only package and class metadata from window
+        changes. Screen text, routes and locations are not read.
+        No app history is stored or transmitted. No location or
+        internet permission is requested.
+    </string>
+    <string name="blocking_summary">
+        Blocking is best-effort. System controls, emergency screens
+        and notifications may remain available.
+    </string>
+    <string name="security_scan_todo">
+        TODO: automated security scanning in our build pipeline.
+        Not implemented yet.
+    </string>
+</resources>

@@ -32,8 +32,36 @@
 
             <TextView
                 style="@style/Breathe.Body"
-                android:layout_marginTop="11dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/accessibility_summary" />
+
+            <LinearLayout style="@style/Breathe.ListRow">
+
+                <TextView
+                    style="@style/Breathe.ListNumber"
+                    android:text="@string/list_item_one" />
+
+                <TextView
+                    style="@style/Breathe.ListText"
+                    android:text="@string/accessibility_reminder" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/Breathe.ListRow">
+
+                <TextView
+                    style="@style/Breathe.ListNumber"
+                    android:text="@string/list_item_two" />
+
+                <TextView
+                    style="@style/Breathe.ListText"
+                    android:text="@string/accessibility_detection" />
+            </LinearLayout>
+
+            <TextView
+                style="@style/Breathe.Body"
+                android:layout_marginTop="16dp"
+                android:text="@string/accessibility_content_notice"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/security_details"
