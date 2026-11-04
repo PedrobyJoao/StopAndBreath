@@ -6,9 +6,9 @@ object ReminderConfig {
     const val INTERVAL_MINUTES = 1L
     const val COUNTDOWN_SECONDS = 5L
 
-    const val MESSAGE_MIN_TEXT_SP = 20f
-    const val MESSAGE_MAX_TEXT_SP = 32f
-    const val DISMISS_TEXT_SP = 18f
+    const val MESSAGE_MIN_TEXT_SP = 15f
+    const val MESSAGE_MAX_TEXT_SP = 26f
+    const val DISMISS_TEXT_SP = 15f
 
     val MESSAGES = listOf(
         "Breathing in, I am aware of my in-breath.\nBreathing out, I am aware of my out-breath.",

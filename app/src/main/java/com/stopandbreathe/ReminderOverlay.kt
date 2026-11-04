@@ -115,7 +115,7 @@ class ReminderOverlay(context: Context, message: String) :
         val baseSp = (width / metrics.density * 0.08f)
             .coerceIn(24f, ReminderConfig.MESSAGE_MAX_TEXT_SP)
         val minSp = maxOf(
-            ReminderConfig.MESSAGE_MIN_TEXT_SP, baseSp * 0.85f,
+            ReminderConfig.MESSAGE_MIN_TEXT_SP, baseSp * 0.60f,
         )
         val paint = TextPaint(messageView.paint).apply {
             textSize = TypedValue.applyDimension(
