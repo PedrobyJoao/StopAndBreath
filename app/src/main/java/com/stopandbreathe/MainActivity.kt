@@ -77,7 +77,8 @@ class MainActivity : Activity() {
             }
         findViewById<View>(R.id.security_details)
             .setOnClickListener { showSecurity() }
-        link(findViewById(R.id.report_link), "$repository/issues/new")
+        link(findViewById(R.id.footer_source_link), repository)
+        link(findViewById(R.id.report_link), "$repository/issues")
         @Suppress("DEPRECATION")
         val version = packageManager.getPackageInfo(packageName, 0)
             .versionName.orEmpty()

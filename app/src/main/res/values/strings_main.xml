@@ -46,6 +46,7 @@
         This is an early version. Coming features will be listed here.
     </string>
     <string name="app_version">Version %1$s</string>
+    <string name="footer_source">Source</string>
     <string name="report_problem">Report a problem ↗</string>
     <string name="setup_title">Enable accessibility</string>
     <string name="setup_steps">

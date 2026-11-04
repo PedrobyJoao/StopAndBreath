@@ -13,28 +13,65 @@
             style="@style/Breathe.Heading"
             android:text="@string/security_title" />
 
-        <LinearLayout
-            style="@style/Breathe.Section"
-            android:layout_marginTop="20dp">
+        <TextView
+            style="@style/Breathe.Heading"
+            android:layout_marginTop="20dp"
+            android:text="@string/security_accessibility_title"
+            android:textSize="16sp" />
 
-            <TextView
-                style="@style/Breathe.Body"
-                android:text="@string/open_source_summary" />
-
-            <TextView
-                android:id="@+id/source_link"
-                style="@style/Breathe.Link"
-                android:layout_marginTop="4dp"
-                android:text="@string/view_source" />
-        </LinearLayout>
+        <TextView
+            style="@style/Breathe.Body"
+            android:layout_marginTop="8dp"
+            android:text="@string/security_accessibility_summary" />
 
         <View style="@style/Breathe.Divider" />
 
         <LinearLayout style="@style/Breathe.Section">
 
             <TextView
+                style="@style/Breathe.Heading"
+                android:text="@string/security_configuration_title"
+                android:textSize="16sp" />
+
+            <TextView
                 style="@style/Breathe.Body"
+                android:layout_marginTop="12dp"
+                android:text="@string/window_content_title"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/Breathe.Body"
+                android:layout_marginTop="8dp"
+                android:breakStrategy="simple"
+                android:fontFamily="monospace"
+                android:hyphenationFrequency="none"
+                android:text="@string/window_content_configuration"
+                android:textSize="14sp" />
+
+            <TextView
+                style="@style/Breathe.Body"
+                android:layout_marginTop="8dp"
                 android:text="@string/screen_content_summary" />
+
+            <TextView
+                style="@style/Breathe.Body"
+                android:layout_marginTop="16dp"
+                android:text="@string/window_events_title"
+                android:textStyle="bold" />
+
+            <TextView
+                style="@style/Breathe.Body"
+                android:layout_marginTop="8dp"
+                android:breakStrategy="simple"
+                android:fontFamily="monospace"
+                android:hyphenationFrequency="none"
+                android:text="@string/window_events_configuration"
+                android:textSize="14sp" />
+
+            <TextView
+                style="@style/Breathe.Body"
+                android:layout_marginTop="8dp"
+                android:text="@string/window_events_summary" />
 
             <TextView
                 android:id="@+id/configuration_link"
@@ -46,19 +83,42 @@
         <View style="@style/Breathe.Divider" />
 
         <TextView
+            style="@style/Breathe.Heading"
+            android:text="@string/security_privacy_title"
+            android:textSize="16sp" />
+
+        <TextView
             style="@style/Breathe.Body"
+            android:layout_marginTop="8dp"
             android:text="@string/privacy_summary" />
+
+        <View style="@style/Breathe.Divider" />
+
+        <TextView
+            style="@style/Breathe.Heading"
+            android:text="@string/security_source_title"
+            android:textSize="16sp" />
+
+        <TextView
+            style="@style/Breathe.Body"
+            android:layout_marginTop="8dp"
+            android:text="@string/open_source_summary" />
+
+        <TextView
+            style="@style/Breathe.Body"
+            android:layout_marginTop="16dp"
+            android:text="@string/security_scan_todo" />
+
+        <TextView
+            android:id="@+id/source_link"
+            style="@style/Breathe.Link"
+            android:layout_marginTop="4dp"
+            android:text="@string/view_source" />
 
         <View style="@style/Breathe.Divider" />
 
         <TextView
             style="@style/Breathe.Body"
             android:text="@string/blocking_summary" />
-
-        <View style="@style/Breathe.Divider" />
-
-        <TextView
-            style="@style/Breathe.Body"
-            android:text="@string/security_scan_todo" />
     </LinearLayout>
 </ScrollView>
