@@ -19,14 +19,15 @@ Simply TODOs:
     - [ ] Be VERY clear about real permissions (pointing out
           line of code where we're setting) and what is asked by android
     - [ ] simple how to give accessibility permission
-    - [ ] improve fonts of message (not hardcoded)
-  - [ ] README (written by me)
-    - [ ] Document supported android version
-    - [ ] Be VERY clear about real permissions (pointing out
+    - [ ] improve fonts of reminder message (not hardcoded)
+    - [ ] image background (same as used for the locker)
+    - [ ] feat: Background locker image
+  - [x] README (written by me)
+    - [x] Document supported android version
+    - [x] Be VERY clear about real permissions (pointing out
           line of code where we're setting) and what is asked by android
 - [ ] v0.2
-  - [ ] feat: Background locker image
-  - [ ] feat(UI-settings): automatic language detection
+  - [ ] feat: idle apps: banks, calculator, clock... (find a better to identify them)
   - [ ] CI/CD: security scan
     - [ ] feat: mention security scan in the app
     - [ ] feat: mention security scan in the README
@@ -35,6 +36,7 @@ Simply TODOs:
   - [ ] Icon
   - [ ] CI/CD: publish Google Play when release
   - [ ] CI/CD: publish F-Droid when release
+  - [ ] feat(UI-settings): automatic language detection
 - [x] License
 - [ ] Donation
 - [ ] Website for all Stop and Breathe apps
@@ -46,8 +48,12 @@ Simply TODOs:
   - [ ] feat: reminder levels
   - [ ] UI: choose your language
   - [ ] feat: some different languages: english, pt-br, spanish...
+  - [ ] Contributing.md
 - [ ] v0.4
   - [ ] feat: maybe allow users to choose if they want strict version
         with accessibility permission or less strict version without accessibility
         permission.
   - [ ] feat: nix flake check and add to CI/CD?
+  - [ ] feat: kids version
+  - [ ] feat: strictness levels for specific days
+  - [ ] feat: EXTREME-STRICT: save database, and keep blocking
