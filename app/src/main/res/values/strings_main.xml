@@ -43,7 +43,20 @@
     </string>
     <string name="early_version_title">Coming features</string>
     <string name="upcoming_features_placeholder">
-        This is an early version. Coming features will be listed here.
+        \n
+        • <b>Reminder levels</b>\n
+        Different levels of breathing breaks (mini, long
+        and rest). e.g.: after 1 hour of screen time, 5 min
+        of break.\n\n
+        • <b>Customize your reminder levels</b>\n
+        Choose usage limits and break lengths for each level.\n\n
+        • <b>App language</b>\n
+        Choose your preferred language.\n\n
+        • <b>Weekly schedules</b>\n
+        Set stricter limits or longer breaks on specific days.\n\n
+        • <b>Reminder recovery</b>\n
+        Optionally restore reminder progress after a reboot.\n\n
+        • <b>Google Calendar integration</b>\n
     </string>
     <string name="app_version">Version %1$s</string>
     <string name="footer_source">Source</string>
