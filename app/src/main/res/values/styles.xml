@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.StopAndBreathe.Base"
         parent="android:style/Theme.Material.Light.NoActionBar">
-        <item name="android:fontFamily">sans</item>
+        <item name="android:fontFamily">@font/dm_sans</item>
         <item name="android:colorAccent">@color/accent</item>
         <item name="android:colorBackground">
             @color/card_background
@@ -36,12 +36,14 @@
     </style>
     <style name="Breathe.Title.Base" parent="Breathe.Body">
         <item name="android:textSize">32sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="Breathe.Title" parent="Breathe.Title.Base" />
     <style name="Breathe.Heading.Base" parent="Breathe.Body">
         <item name="android:textSize">20sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/dm_sans</item>
+        <item name="android:textStyle">bold</item>
     </style>
     <style name="Breathe.Heading" parent="Breathe.Heading.Base" />
     <style name="Breathe.Caption" parent="Breathe.Body">
@@ -64,9 +66,9 @@
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
     </style>
-    <style name="Breathe.Link" parent="Breathe.Body">
+    <style name="Breathe.Link.Base" parent="Breathe.Body">
         <item name="android:textColor">@color/accent</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:fontFamily">@font/dm_sans</item>
         <item name="android:minHeight">48dp</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingVertical">8dp</item>
@@ -76,6 +78,11 @@
             ?android:attr/selectableItemBackground
         </item>
     </style>
+    <style name="Breathe.Link" parent="Breathe.Link.Base" />
+    <style name="Breathe.Button.Base" parent="Breathe">
+        <item name="android:fontFamily">@font/dm_sans</item>
+    </style>
+    <style name="Breathe.Button" parent="Breathe.Button.Base" />
     <style name="Breathe.Card">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
