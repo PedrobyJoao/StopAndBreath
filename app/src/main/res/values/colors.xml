@@ -7,4 +7,7 @@
     <color name="text_primary">#1E302A</color>
     <color name="text_secondary">#53645D</color>
     <color name="accent">#246B5B</color>
+    <color name="reminder_background_top">#FFFCF5</color>
+    <color name="reminder_background_bottom">#D8D5CA</color>
+    <color name="reminder_ink">#292720</color>
 </resources>

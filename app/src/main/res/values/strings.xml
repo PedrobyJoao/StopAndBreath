@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Stop And Breathe</string>
+    <string name="reminder_dismiss">Dismiss</string>
+    <plurals name="reminder_dismiss_countdown">
+        <item quantity="one">Dismiss (%d second)</item>
+        <item quantity="other">Dismiss (%d seconds)</item>
+    </plurals>
     <string name="security_title">
         Read more about app\'s security
     </string>

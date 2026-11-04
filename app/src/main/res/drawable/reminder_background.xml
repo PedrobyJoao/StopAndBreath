@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- CSS linear-gradient(180deg): top to bottom. -->
+    <gradient
+        android:angle="270"
+        android:startColor="@color/reminder_background_top"
+        android:endColor="@color/reminder_background_bottom" />
+</shape>
