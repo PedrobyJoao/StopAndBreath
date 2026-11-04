@@ -4,9 +4,22 @@
         parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorBackground">
+            @color/card_background
+        </item>
+        <item name="android:colorBackgroundFloating">
+            @color/card_background
+        </item>
         <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowBackground">
+        <item name="android:statusBarColor">
             @color/page_background
+        </item>
+        <!-- Keep contrast for API 26's light navigation icons. -->
+        <item name="android:navigationBarColor">
+            @color/text_primary
+        </item>
+        <item name="android:windowBackground">
+            @drawable/reminder_background
         </item>
     </style>
     <style name="Theme.StopAndBreathe"
