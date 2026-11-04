@@ -3,8 +3,8 @@ package com.stopandbreathe
 object ReminderConfig {
     
     // User facing config
-    const val INTERVAL_MINUTES = 1L
-    const val COUNTDOWN_SECONDS = 5L
+    const val INTERVAL_MINUTES = 15L
+    const val COUNTDOWN_SECONDS = 20L
 
     const val MESSAGE_MIN_TEXT_SP = 16f
     const val MESSAGE_MAX_TEXT_SP = 26f
@@ -16,8 +16,6 @@ object ReminderConfig {
         "Breathing in, I smile to my body.\nBreathing out, I release the tension in my body. ",
         "Breathing in, I am aware of the pain in me.\nBreathing out, I embrace the pain in me.",
         "Breathing in, I am aware of my feelings.\nBreathing out, I calm my feelings.",
-        "Breathing in, I observe the impermanent nature of all things.\nBreathing out, I observe the non-desire nature of all things.",
-        "Breathing in, I observe the unborn and undying nature of all things.\nBreathing out, I observe letting go.",
         "Breathing in, I dwell in the present moment.\nBreathing out, I know it is a wonderful moment.",
         "Breathing in, I have arrived.\nBreathing out, I am home.",
         "Breathing in, I acknowledge I'm gonna die one day.\nBreathing out, I am alive here and now.",
