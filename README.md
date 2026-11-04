@@ -1,4 +1,4 @@
-# Stop And Breathe - Android 8.0+
+# StopAndBreathe - Android 8.0+
 
 Sometimes, we lose control of our smartphone usage. Suddenly, 1 hour has
 passed and you have been just mindless scrolling through everywhere
@@ -16,7 +16,7 @@ We already have some app blockers which may come handy but sometimes just not
 flexible enough to our crazy routines. What if we could have just a reminder?
 That block us for a few seconds, not for hours.
 
-Stop And Breathe comes as a simple, gentle, but strict, reminder to breathe
+StopAndBreathe comes as a simple, gentle, but strict, reminder to breathe
 and be aware of the present moment.
 
 It breaks the spell of an infinite reward system that our smartphones

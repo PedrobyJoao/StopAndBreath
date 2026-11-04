@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Stop And Breathe</string>
+    <string name="app_name">StopAndBreathe</string>
     <string name="reminder_dismiss">Dismiss</string>
     <plurals name="reminder_dismiss_countdown">
         <item quantity="one">Dismiss (%d second)</item>

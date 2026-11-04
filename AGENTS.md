@@ -1,4 +1,4 @@
-# Stop And Breath
+# StopAndBreathe
 
 This Android app provides periodic mindful-breathing reminders.
 
