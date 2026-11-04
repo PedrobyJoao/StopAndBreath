@@ -14,46 +14,54 @@ Simply TODOs:
   - [x] CI/CD: tests + build
   - [x] CI/CD: release
   - [x] feat: idle when using maps apps!
-  - [x] app name is not Stop&Breathe anymore, is Stop And Breathe
-  - [ ] UI: better UI app
-    - [ ] Be VERY clear about real permissions (pointing out
+  - [x] app name is not Stop&Breathe anymore, is StopAndBreathe
+  - [x] UI: better UI app
+    - [x] Be VERY clear about real permissions (pointing out
           line of code where we're setting) and what is asked by android
-    - [ ] simple how to give accessibility permission
-    - [ ] improve fonts of reminder message (not hardcoded)
-    - [ ] image background (same as used for the locker)
-    - [ ] feat: Background locker image
+    - [x] simple how to give accessibility permission
+    - [x] background color
+    - [x] improve fonts of reminder message (not hardcoded)
+    - [x] feat: features
+    - [ ] review and update AGENTS.md with new files and configs
   - [x] README (written by me)
     - [x] Document supported android version
     - [x] Be VERY clear about real permissions (pointing out
           line of code where we're setting) and what is asked by android
 - [ ] v0.2
+  - [ ] feat: debug version with shorter defaults
   - [ ] feat: idle apps: banks, calculator, clock... (find a better to identify them)
+  - [ ] CI/CD: publish prod build instead of debug
   - [ ] CI/CD: security scan
     - [ ] feat: mention security scan in the app
     - [ ] feat: mention security scan in the README
-  - [ ] github: unallow direct commit to main/release branches
-  - [ ] github: unallow merge to main without tests+build passing
   - [ ] Icon
+  - [ ] UI review
+  - [ ] feat(UI-settings): automatic language detection
   - [ ] CI/CD: publish Google Play when release
   - [ ] CI/CD: publish F-Droid when release
-  - [ ] feat(UI-settings): automatic language detection
+  - [ ] github: unallow direct commit to main/release branches
+  - [ ] github: unallow merge to main without tests+build passing
 - [x] License
 - [ ] Donation
 - [ ] Website for all Stop and Breathe apps
 - [ ] v0.3
   - [ ] feat: calendar
-  - [ ] feat: google calendar integration
   - [ ] feat: allow users to set their own times for config
         but put a limit of min and max minutes/seconds
   - [ ] feat: reminder levels
   - [ ] UI: choose your language
   - [ ] feat: some different languages: english, pt-br, spanish...
   - [ ] Contributing.md
+
 - [ ] v0.4
+  - [ ] feat: strictness levels for specific days
+  - [ ] feat: EXTREME-STRICT option: save database, and keep blocking
   - [ ] feat: maybe allow users to choose if they want strict version
         with accessibility permission or less strict version without accessibility
         permission.
+
+- [ ] v0.5:
+  - [ ] feat: google calendar integration
   - [ ] feat: nix flake check and add to CI/CD?
   - [ ] feat: kids version
-  - [ ] feat: strictness levels for specific days
-  - [ ] feat: EXTREME-STRICT: save database, and keep blocking
+  - [ ] feat: don't run CICD when only changing markdown files
