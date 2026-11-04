@@ -3,8 +3,8 @@ package com.stopandbreathe
 object ReminderConfig {
     
     // User facing config
-    const val INTERVAL_MINUTES = 10L
-    const val COUNTDOWN_SECONDS = 15L
+    const val INTERVAL_MINUTES = 15L
+    const val COUNTDOWN_SECONDS = 20L
 
     const val MESSAGE_TEXT_SP = 28f
     const val COUNTDOWN_TEXT_SP = 18f
