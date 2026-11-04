@@ -13,14 +13,10 @@
         No app is available to open this link.
     </string>
     <string name="accessibility_description">
-        Displays full-screen mindful-breathing reminders and blocks
-        ordinary touches until the countdown finishes. Reminders start
-        automatically, including after reboot. Detects active map apps
-        from app/window package names so they count as idle and remain
-        unobstructed. Screen-content access is disabled. Does not read
-        screen text, routes or locations, or store or transmit app
-        history. Time off, locked or in maps restores the interval.
-        A started reminder continues while off or in maps, but pauses
-        on the lit lock screen. System controls may remain available.
+        A simple, gentle, but strict, mindful reminder that blocks
+        phone usage until the rest countdown finishes. Reminders start
+        automatically, including after reboot. Screen-content access is disabled.
+        Does not read screen text, routes or locations, or store or transmit app
+        history. System controls may remain available.
     </string>
 </resources>
