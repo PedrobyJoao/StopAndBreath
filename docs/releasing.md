@@ -12,8 +12,8 @@ example, for version `0.1.1`:
 > `versionCode` is an increasing integer. Just +1 after each release
 
 ```sh
-git tag v0.1.1
-git push origin v0.1.1
+git tag v0.1
+git push origin v0.1
 ```
 
 CI checks that the tag matches the version and references a commit
