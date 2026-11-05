@@ -22,12 +22,19 @@ Simply TODOs:
     - [x] background color
     - [x] improve fonts of reminder message (not hardcoded)
     - [x] feat: features
-    - [ ] review and update AGENTS.md with new files and configs
   - [x] README (written by me)
     - [x] Document supported android version
     - [x] Be VERY clear about real permissions (pointing out
           line of code where we're setting) and what is asked by android
+    - [x] prod APK
+    - [ ] UI: encourage user to do the breathing
+    - [x] review and update AGENTS.md with new files and configs
+
 - [ ] v0.2
+  - [ ] UI: get version from config
+  - [ ] feat: reminder levels
+  - [ ] feat: notification before reminder
+  - [ ] feat: postpone
   - [ ] feat: debug version with shorter defaults
   - [ ] feat: idle apps: banks, calculator, clock... (find a better to identify them)
   - [ ] CI/CD: publish prod build instead of debug
@@ -41,14 +48,15 @@ Simply TODOs:
   - [ ] CI/CD: publish F-Droid when release
   - [ ] github: unallow direct commit to main/release branches
   - [ ] github: unallow merge to main without tests+build passing
+
 - [x] License
 - [ ] Donation
 - [ ] Website for all Stop and Breathe apps
+
 - [ ] v0.3
   - [ ] feat: calendar
   - [ ] feat: allow users to set their own times for config
         but put a limit of min and max minutes/seconds
-  - [ ] feat: reminder levels
   - [ ] UI: choose your language
   - [ ] feat: some different languages: english, pt-br, spanish...
   - [ ] Contributing.md
