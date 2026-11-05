@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="close_dialog">Close</string>
+    <string name="security_accessibility_title">
+        Why accessibility?
+    </string>
+    <string name="security_accessibility_summary">
+        We tried to use as few permissions as possible, but reaching
+        the intended level of strictness and usability required an 
+        accessibility service.\n
+        Android shows a broad warning for
+        accessibility access, even though the app is configured to
+        display reminders and detect window changes for idle apps.
+    </string>
+    <string name="security_configuration_title">
+        What is configured?
+    </string>
+    <string name="window_content_title">
+        Window-content retrieval: disabled
+    </string>
+    <string name="window_content_configuration" translatable="false">
+        canRetrieveWindowContent=\"false\"
+    </string>
+    <string name="screen_content_summary">
+        The service cannot retrieve the screen content!
+    </string>
+    <string name="window_events_title">
+        Events: window-state changes only
+    </string>
+    <string name="window_events_configuration" translatable="false">
+        accessibilityEventTypes=\"typeWindowStateChanged\"
+    </string>
+    <string name="window_events_summary">
+        These help recognize apps whose use counts as idle time.
+    </string>
+    <string name="security_privacy_title">What about my data?</string>
+    <string name="security_source_title">
+        Open source and security
+    </string>
+    <string name="open_source_summary">
+        Anyone can inspect the source code. This supports
+        transparency, but does not guarantee security or mean the app
+        has been audited.
+    </string>
+    <string name="view_source">View source code ↗</string>
+    <string name="view_configuration">See the configuration ↗</string>
+    <string name="privacy_summary">
+        App detection uses package and class identifiers. Android may
+        include text in window-change events, but this app ignores
+        that text. No app history is stored or transmitted, and no
+        location or internet permission is requested.
+    </string>
+    <string name="blocking_summary">
+        Blocking is best-effort. System controls, emergency screens
+        and notifications may remain available.
+    </string>
+    <string name="security_scan_todo">
+        TODO: automated security scanning is planned for v0.2.
+        It is not implemented yet.
+    </string>
+</resources>

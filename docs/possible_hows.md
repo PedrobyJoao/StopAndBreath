@@ -1,4 +1,4 @@
-# Stop And Breathe: enforcement options
+# StopAndBreathe: enforcement options
 
 Screen pinning is excluded because each new session requires system
 confirmation. None of the options below requires root; untested

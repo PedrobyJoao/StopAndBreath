@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Breathe.Title" parent="Breathe.Title.Base">
+        <item name="android:accessibilityHeading">true</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontVariationSettings">
+            "'wght' 600"
+        </item>
+    </style>
+    <style name="Breathe.Heading" parent="Breathe.Heading.Base">
+        <item name="android:accessibilityHeading">true</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontVariationSettings">
+            "'wght' 600"
+        </item>
+    </style>
+    <style name="Breathe.Link" parent="Breathe.Link.Base">
+        <item name="android:fontVariationSettings">
+            "'wght' 500"
+        </item>
+    </style>
+    <style name="Breathe.Button" parent="Breathe.Button.Base">
+        <item name="android:fontVariationSettings">
+            "'wght' 500"
+        </item>
+    </style>
+</resources>

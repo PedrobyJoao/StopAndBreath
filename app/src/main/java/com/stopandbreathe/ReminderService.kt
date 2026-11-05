@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Handler
@@ -14,17 +13,12 @@ import android.os.Looper
 import android.os.PowerManager
 import android.os.SystemClock
 import android.view.Gravity
-import android.view.KeyEvent
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.TextView
 
 data class ReminderStatus(
     val connected: Boolean = false,
@@ -54,7 +48,6 @@ class ReminderService : AccessibilityService() {
     private var session = newSession()
     private lateinit var windows: WindowManager
     private var overlay: View? = null
-    private var countdownText: TextView? = null
     private var dismissButton: Button? = null
     private var message: String? = null
     private var connected = false
@@ -200,10 +193,13 @@ class ReminderService : AccessibilityService() {
 
     private fun renderCountdown() {
         val remaining = session.countdownSeconds
-        countdownText?.text = if (remaining > 0) {
-            "Take a breath. Dismiss in ${remaining}s."
+        dismissButton?.text = if (remaining > 0) {
+            resources.getQuantityString(
+                R.plurals.reminder_dismiss_countdown,
+                remaining.toInt(), remaining,
+            )
         } else {
-            "0s — continue when you're ready."
+            getString(R.string.reminder_dismiss)
         }
         dismissButton?.isEnabled =
             session.screenState == ScreenState.ON_AND_UNLOCKED &&
@@ -213,40 +209,8 @@ class ReminderService : AccessibilityService() {
 
     private fun addOverlay(text: String) {
         if (overlay != null) return
-        val root = object : FrameLayout(this) {
-            override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-                if (event.keyCode == KeyEvent.KEYCODE_BACK) {
-                    return true
-                }
-                return super.dispatchKeyEvent(event)
-            }
-        }.apply {
-            setBackgroundColor(Color.rgb(17, 42, 36))
-            isClickable = true
-            isFocusableInTouchMode = true
-        }
-        val content = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            gravity = Gravity.CENTER
-            setPadding(dp(24), dp(32), dp(24), dp(32))
-        }
-        val messageView = TextView(this).apply {
-            this.text = text
-            textSize = ReminderConfig.MESSAGE_TEXT_SP
-            gravity = Gravity.CENTER
-            setTextColor(Color.WHITE)
-            setPadding(0, 0, 0, dp(32))
-        }
-        val countdown = TextView(this).apply {
-            textSize = ReminderConfig.COUNTDOWN_TEXT_SP
-            gravity = Gravity.CENTER
-            setTextColor(Color.rgb(210, 231, 220))
-            setPadding(0, 0, 0, dp(16))
-        }
-        val dismiss = Button(this).apply {
-            this.text = "Dismiss"
-            isAllCaps = false
-            isEnabled = false
+        val root = ReminderOverlay(this, text)
+        val dismiss = root.dismissButton.apply {
             setOnClickListener {
                 // Recheck the real screen state and monotonic timer;
                 // disabled styling alone is not the dismissal guard.
@@ -262,16 +226,6 @@ class ReminderService : AccessibilityService() {
                 updateReminder()
             }
         }
-        content.addView(
-            messageView, LinearLayout.LayoutParams(-1, -2),
-        )
-        content.addView(countdown, LinearLayout.LayoutParams(-1, -2))
-        content.addView(dismiss, LinearLayout.LayoutParams(-1, -2))
-        val scroll = ScrollView(this).apply {
-            isFillViewport = true
-            addView(content)
-        }
-        root.addView(scroll, FrameLayout.LayoutParams(-1, -1))
         // The barrier fills the screen; inset only its content so
         // cutouts and system navigation do not obscure Dismiss.
         root.setOnApplyWindowInsetsListener { _, insets ->
@@ -280,12 +234,12 @@ class ReminderService : AccessibilityService() {
                     WindowInsets.Type.systemBars() or
                         WindowInsets.Type.displayCutout(),
                 )
-                scroll.setPadding(
+                root.setPadding(
                     bars.left, bars.top, bars.right, bars.bottom,
                 )
             } else {
                 @Suppress("DEPRECATION")
-                scroll.setPadding(
+                root.setPadding(
                     insets.systemWindowInsetLeft,
                     insets.systemWindowInsetTop,
                     insets.systemWindowInsetRight,
@@ -309,7 +263,6 @@ class ReminderService : AccessibilityService() {
         }
         windows.addView(root, params)
         overlay = root
-        countdownText = countdown
         dismissButton = dismiss
         root.requestFocus()
         root.requestApplyInsets()
@@ -324,7 +277,6 @@ class ReminderService : AccessibilityService() {
             }
         }
         overlay = null
-        countdownText = null
         dismissButton = null
     }
 
@@ -366,7 +318,4 @@ class ReminderService : AccessibilityService() {
         ReminderConfig.INTERVAL_MILLIS,
         ReminderConfig.COUNTDOWN_MILLIS,
     )
-
-    private fun dp(value: Int): Int =
-        (value * resources.displayMetrics.density).toInt()
 }

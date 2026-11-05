@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="page_background">
+        @color/reminder_background_top
+    </color>
+    <color name="card_background">
+        @color/reminder_background_top
+    </color>
+    <color name="card_border">#D8D2C4</color>
+    <color name="status_background">#EAF2ED</color>
+    <color name="text_primary">@color/reminder_ink</color>
+    <color name="text_secondary">#5F5A50</color>
+    <color name="accent">#236657</color>
+    <color name="reminder_background_top">#FFFCF5</color>
+    <color name="reminder_background_bottom">#D8D5CA</color>
+    <color name="reminder_ink">#292720</color>
+</resources>
