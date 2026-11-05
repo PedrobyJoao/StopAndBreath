@@ -19,6 +19,7 @@ object ReminderConfig {
         "Breathing in, I dwell in the present moment.\nBreathing out, I know it is a wonderful moment.",
         "Breathing in, I have arrived.\nBreathing out, I am home.",
         "Breathing in, I acknowledge I'm gonna die one day.\nBreathing out, I am alive here and now.",
+        "Breathing in, I fart and I smell it.\nBreathing out, it smells good.",
     )
 
     // CONSTANTS for internal implementation

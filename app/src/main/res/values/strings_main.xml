@@ -4,7 +4,12 @@
         StopAndBreathe is an open-source app that interrupts
         mindless phone usage with a short breathing break. After
         every %1$d minutes of screen usage, a reminder is displayed
-        which you can dismiss after %2$d seconds.
+        which you can dismiss after %2$d seconds.\n\n
+
+        We encourage you to actually breathe in and breathe out
+        slowly and with awareness until the dismiss timer is done. (You
+        may also say, mentally or out loud, these beautiful
+        mindful phrases.)
     </string>
     <string name="introduction_preview">
         StopAndBreathe is an open-source app that interrupts

@@ -27,8 +27,8 @@ Simply TODOs:
     - [x] Be VERY clear about real permissions (pointing out
           line of code where we're setting) and what is asked by android
     - [x] prod APK
-    - [ ] UI: encourage user to do the breathing
-    - [x] review and update AGENTS.md with new files and configs
+    - [x] UI: encourage user to do the breathing
+    - [x] review PR
 
 - [ ] v0.2
   - [ ] UI: get version from config
@@ -50,6 +50,7 @@ Simply TODOs:
   - [ ] github: unallow merge to main without tests+build passing
 
 - [x] License
+- [ ] Why I made this?
 - [ ] Donation
 - [ ] Website for all Stop and Breathe apps
 
