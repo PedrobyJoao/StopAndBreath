@@ -1,7 +1,7 @@
 # PRs to main: test and build an unsigned production APK.
 # don't forget to add branch rules, unallow direct commit to main
 #
-# Releases: after merging, push vX.Y.Z matching app versionName
+# Releases: after merging, push vX.Y matching app versionName
 # in app/build.gradle.kts.
 #
 # Tags must reference a commit on main; tests/build must pass
@@ -47,9 +47,9 @@ jobs:
           version=$(sed -n 's/^ *versionName = "\(.*\)"$/\1/p' \
             app/build.gradle.kts)
           number='(0|[1-9][0-9]*)'
-          pattern="^v${number}[.]${number}[.]${number}$"
+          pattern="^v${number}[.]${number}$"
           [[ "$TAG" =~ $pattern && "${TAG#v}" == "$version" ]] || {
-            echo '::error::Expected vX.Y.Z matching app versionName'
+            echo '::error::Expected vX.Y matching app versionName'
             exit 1
           }
           git merge-base --is-ancestor HEAD origin/main || {
